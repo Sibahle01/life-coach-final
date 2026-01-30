@@ -1,0 +1,203 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ADMIN USER
+model AdminUser {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String?
+  role      String   @default("ADMIN")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("admin_users")
+}
+
+// COACHING SERVICES
+model Service {
+  id                String             @id @default(cuid())
+  name              String
+  description       String
+  duration          Int
+  price             Decimal            @db.Decimal(10, 2)
+  format            String
+  isActive          Boolean            @default(true)
+  isFeatured        Boolean            @default(false)
+  order             Int                @default(0)
+  sessionBookings   SessionBooking[]
+  availabilitySlots AvailabilitySlot[]
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+
+  @@map("services")
+}
+
+// SESSION BOOKINGS
+model SessionBooking {
+  id            String   @id @default(cuid())
+  serviceId     String
+  service       Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  clientName    String
+  clientEmail   String
+  clientPhone   String?
+  bookingDate   DateTime
+  bookingTime   String
+  status        String   @default("PENDING")
+  paymentStatus String   @default("PENDING")
+  amount        Decimal  @db.Decimal(10, 2)
+  meetingLink   String?
+  notes         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@map("session_bookings")
+}
+
+// BOOKS
+model Book {
+  id              String          @id @default(cuid())
+  title           String
+  description     String
+  price           Decimal         @db.Decimal(10, 2)
+  coverImageUrl   String?
+  isbn            String?         @unique
+  format          String
+  stockQuantity   Int             @default(0)
+  isFeatured      Boolean         @default(false)
+  isAvailable     Boolean         @default(true)
+  fulfillmentType String          @default("manual")
+  order           Int             @default(0)
+  bookOrderItems  BookOrderItem[]
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  @@map("books")
+}
+
+// BOOK ORDERS
+model BookOrder {
+  id                 String          @id @default(cuid())
+  orderNumber        String          @unique
+  status             String          @default("PENDING")
+  paymentStatus      String          @default("PENDING")
+  subtotal           Decimal         @db.Decimal(10, 2)
+  shippingCost       Decimal         @db.Decimal(10, 2) @default(0)
+  tax                Decimal         @db.Decimal(10, 2) @default(0)
+  total              Decimal         @db.Decimal(10, 2)
+  customerName       String
+  customerEmail      String
+  customerPhone      String
+  shippingAddress    String?
+  shippingCity       String?
+  shippingProvince   String?
+  shippingPostalCode String?
+  trackingNumber     String?
+  notes              String?
+  items              BookOrderItem[]
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
+
+  @@map("book_orders")
+}
+
+// BOOK ORDER ITEMS
+model BookOrderItem {
+  id          String    @id @default(cuid())
+  bookOrderId String
+  bookOrder   BookOrder @relation(fields: [bookOrderId], references: [id], onDelete: Cascade)
+  bookId      String
+  book        Book      @relation(fields: [bookId], references: [id])
+  quantity    Int
+  price       Decimal   @db.Decimal(10, 2)
+  createdAt   DateTime  @default(now())
+
+  @@map("book_order_items")
+}
+
+// EVENTS
+model Event {
+  id          String        @id @default(cuid())
+  title       String
+  description String
+  eventDate   DateTime
+  eventTime   String
+  location    String
+  venue       String?
+  capacity    Int
+  ticketPrice Decimal       @db.Decimal(10, 2)
+  imageUrl    String?
+  isVirtual   Boolean       @default(false)
+  meetingLink String?
+  status      String        @default("UPCOMING")
+  tickets     EventTicket[]
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@map("events")
+}
+
+// EVENT TICKETS
+model EventTicket {
+  id              String   @id @default(cuid())
+  ticketNumber    String   @unique
+  eventId         String
+  event           Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  attendeeName    String
+  attendeeEmail   String
+  attendeePhone   String?
+  quantity        Int      @default(1)
+  totalAmount     Decimal  @db.Decimal(10, 2)
+  paymentStatus   String   @default("PENDING")
+  status          String   @default("ACTIVE")
+  specialRequests String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("event_tickets")
+}
+
+// AVAILABILITY SLOTS (for booking system)
+model AvailabilitySlot {
+  id            String    @id @default(cuid())
+  dayOfWeek     Int
+  startTime     String
+  endTime       String
+  serviceId     String?
+  service       Service?  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  isActive      Boolean   @default(true)
+  recurringType String    @default("weekly")
+  startDate     DateTime?
+  endDate       DateTime?
+  maxBookings   Int       @default(1)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@map("availability_slots")
+}
+
+// BLOG POSTS (optional - future)
+model BlogPost {
+  id            String    @id @default(cuid())
+  title         String
+  slug          String    @unique
+  content       String
+  excerpt       String?
+  coverImageUrl String?
+  author        String?
+  category      String?
+  tags          String[]
+  isPublished   Boolean   @default(false)
+  publishedAt   DateTime?
+  views         Int       @default(0)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@map("blog_posts")
+}

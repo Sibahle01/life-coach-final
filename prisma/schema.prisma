@@ -1,0 +1,442 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ADMIN USER (UPDATED WITH BLOCKING RELATION)
+model AdminUser {
+  id                 String            @id @default(cuid())
+  email              String            @unique
+  password           String
+  name               String?
+  role               String            @default("ADMIN")
+  
+  // Relations
+  speakingRequests   SpeakingRequest[]
+  sessionBookings    SessionBooking[]
+  blockedSlots       AvailabilitySlot[] // Added for date blocking
+  
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+
+  @@map("admin_users")
+}
+
+// COACHING SERVICES (ENHANCED)
+model Service {
+  id                String             @id @default(cuid())
+  name              String             // "Life Coaching", "Pre-Marital Counselling", "Invite to Speak"
+  description       String
+  duration          Int                // Duration in minutes
+  price             Decimal            @db.Decimal(10, 2)
+  format            String             // "virtual", "in-person", "both"
+  category          String             // "coaching", "counselling", "speaking"
+  isActive          Boolean            @default(true)
+  isFeatured        Boolean            @default(false)
+  order             Int                @default(0)
+  imageUrl          String?            // Service image/icon
+  
+  // Package fields
+  hasPackage        Boolean            @default(false)
+  packageSessions   Int?               // Number of sessions in package
+  packageDiscount   Decimal?           @db.Decimal(10, 2) // Percentage discount
+  
+  // Relations
+  sessionBookings   SessionBooking[]
+  availabilitySlots AvailabilitySlot[]
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+
+  @@map("services")
+}
+
+// AVAILABILITY SLOTS (ENHANCED WITH ADMIN BLOCKING + WEEKEND FILTERING)
+model AvailabilitySlot {
+  id            String    @id @default(cuid())
+  serviceId     String?
+  service       Service?  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  
+  // Day of week (0=Sunday, 1=Monday, etc.) - NULL means specific date
+  dayOfWeek     Int?
+  
+  // Specific date (for one-time slots)
+  specificDate  DateTime?
+  
+  // Time range
+  startTime     String    // "09:00"
+  endTime       String    // "17:00"
+  
+  // Recurrence
+  recurrence    String    @default("weekly") // "weekly", "biweekly", "monthly", "none"
+  endDate       DateTime? // When recurrence ends
+  
+  // Capacity
+  maxBookings   Int       @default(1)
+  bookingsMade  Int       @default(0)
+  
+  // Status
+  isActive      Boolean   @default(true)
+  isBlocked     Boolean   @default(false) // Manually blocked (vacation, etc.)
+  notes         String?
+  
+  // Admin Blocking Functionality (NEW)
+  isBlockedByAdmin   Boolean    @default(false)
+  blockedReason      String?
+  blockedByAdminId   String?
+  blockedByAdmin     AdminUser? @relation(fields: [blockedByAdminId], references: [id])
+  blockedAt          DateTime?
+  
+  // Weekend filtering (NEW)
+  isWeekend          Boolean    @default(false) // For easy weekend filtering
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@map("availability_slots")
+}
+
+// SESSION BOOKINGS (ENHANCED WITH TRAVEL PRICING + PAYFAST)
+model SessionBooking {
+  id                String            @id @default(cuid())
+  bookingNumber     String            @unique
+  serviceId         String
+  service           Service           @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  
+  // Client details
+  clientName        String
+  clientEmail       String
+  clientPhone       String?
+  companyName       String?           // For "Invite to Speak"
+  eventDetails      String?           // For "Invite to Speak"
+  attendees         Int               @default(1) // Number of people attending
+  
+  // Booking details
+  bookingDate       DateTime
+  bookingTime       String            // "14:30"
+  duration          Int               // Actual duration booked
+  format            String            // "virtual", "in-person"
+  
+  // Enhanced booking fields
+  numberOfSessions  Int               @default(1)
+  sessionType       String            // "single", "package_3", "package_6"
+  totalAmount       Decimal           @db.Decimal(10, 2)
+  amountPaid        Decimal           @db.Decimal(10, 2)
+  paymentReference  String?           // Bank transfer reference
+  proofUrl          String?           // Supabase storage URL
+  proofVerified     Boolean           @default(false)
+  verifiedById      String?
+  verifiedBy        AdminUser?        @relation(fields: [verifiedById], references: [id])
+  verificationDate  DateTime?
+  goals             String?           // Client goals/expectations - NOW PROMINENT IN ADMIN
+  termsAccepted     Boolean           @default(false)
+  
+  // Payment tracking
+  paymentStatus     String            @default("PENDING") // PENDING, PAID, REFUNDED, FAILED
+  paymentId         String?           // Payment gateway reference
+  currency          String            @default("ZAR")
+  
+  // PayFast Integration
+  payfastPaymentId    String?         // PayFast payment ID
+  payfastMerchantId   String?         // Merchant ID
+  payfastReference    String?         // PayFast reference
+  paymentMethod       String?         // "card", "eft", "snapscan", "zapper", "bank_transfer"
+  paymentVerifiedAt   DateTime?       // When PayFast confirmed
+  paymentCanceled     Boolean         @default(false)
+  cancelReason        String?
+  
+  // Session status
+  status            String            @default("PENDING") // PENDING, CONFIRMED, COMPLETED, CANCELLED, RESCHEDULED
+  
+  // Meeting details - ENHANCED FOR TRAVEL PRICING
+  meetingType       String?           @default("virtual") // "virtual", "client_travels", "coach_travels"
+  meetingLink       String?           // Zoom/Teams link for virtual
+  location          String?           // Physical address for in-person
+  
+  // Travel pricing details (NEW) - R6.50 per km when coach travels
+  travelDistanceKm  Decimal?          @db.Decimal(10, 2)  // User-entered distance
+  travelAmount      Decimal?          @db.Decimal(10, 2)  // travelDistanceKm × 6.50
+  sessionAmount     Decimal?          @db.Decimal(10, 2)  // Base session price (for breakdown)
+  
+  // Additional fields
+  notes             String?
+  specialRequests   String?
+  
+  // Automation flags
+  reminderSent      Boolean           @default(false)
+  followupSent      Boolean           @default(false)
+  confirmationSent  Boolean           @default(false)
+  
+  // Rescheduling
+  originalBookingId String?           // If rescheduled, reference original
+  rescheduleReason  String?
+  
+  // Relations
+  speakingRequest   SpeakingRequest?  // Added relation
+  
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+
+  @@map("session_bookings")
+}
+
+// BOOKS (ENHANCED)
+model Book {
+  id                String          @id @default(cuid())
+  title             String
+  description       String
+  author            String
+  price             Decimal         @db.Decimal(10, 2)
+  coverImageUrl     String?
+  ebookFileUrl      String?         // PDF/ePub file for automatic delivery
+  isbn              String?         @unique
+  format            String[]        // ["physical", "ebook", "audiobook"]
+  stockQuantity     Int             @default(0)
+  isFeatured        Boolean         @default(false)
+  isAvailable       Boolean         @default(true)
+  category          String          // "self-help", "business", "relationships"
+  pages             Int?
+  publicationDate   DateTime?
+  order             Int             @default(0)
+  bookOrderItems    BookOrderItem[]
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  @@map("books")
+}
+
+// BOOK ORDERS (ENHANCED WITH PAYFAST)
+model BookOrder {
+  id                 String          @id @default(cuid())
+  orderNumber        String          @unique
+  status             String          @default("PENDING") // PENDING, CONFIRMED, SHIPPED, DELIVERED, CANCELLED
+  paymentStatus      String          @default("PENDING") // PENDING, PAID, REFUNDED, FAILED
+  paymentId          String?         // Payment gateway reference
+  
+  // Customer details
+  customerName       String
+  customerEmail      String
+  customerPhone      String
+  
+  // Shipping details (for physical books)
+  shippingAddress    String?
+  shippingCity       String?
+  shippingProvince   String?
+  shippingPostalCode String?
+  shippingCountry    String          @default("South Africa")
+  shippingMethod     String          @default("standard") // "standard", "express"
+  
+  // Order details
+  subtotal           Decimal         @db.Decimal(10, 2)
+  shippingCost       Decimal         @db.Decimal(10, 2) @default(0)
+  tax                Decimal         @db.Decimal(10, 2) @default(0)
+  total              Decimal         @db.Decimal(10, 2)
+  currency           String          @default("ZAR")
+  
+  // PayFast Integration
+  payfastPaymentId    String?        // PayFast payment ID
+  payfastMerchantId   String?        // Merchant ID
+  payfastReference    String?        // PayFast reference
+  paymentMethod       String?        // "card", "eft", "snapscan", "zapper", "bank_transfer"
+  paymentVerifiedAt   DateTime?      // When PayFast confirmed
+  paymentCanceled     Boolean        @default(false)
+  cancelReason        String?
+  
+  // eBook delivery tracking
+  ebookDelivered     Boolean         @default(false)
+  ebookDeliveryDate  DateTime?
+  downloadLink       String?         // Temporary download link
+  downloadExpires    DateTime?       // When download link expires
+  
+  // Physical delivery tracking
+  trackingNumber     String?
+  carrier            String?         // "Courier Guy", "Pargo", "PostNet"
+  estimatedDelivery  DateTime?
+  deliveredDate      DateTime?
+  
+  notes              String?
+  items              BookOrderItem[]
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
+
+  @@map("book_orders")
+}
+
+// BOOK ORDER ITEMS
+model BookOrderItem {
+  id          String    @id @default(cuid())
+  bookOrderId String
+  bookOrder   BookOrder @relation(fields: [bookOrderId], references: [id], onDelete: Cascade)
+  bookId      String
+  book        Book      @relation(fields: [bookId], references: [id])
+  quantity    Int
+  price       Decimal   @db.Decimal(10, 2)
+  format      String    @default("physical") // "physical", "ebook"
+  createdAt   DateTime  @default(now())
+
+  @@map("book_order_items")
+}
+
+// PAYMENT RECORDS (ENHANCED)
+model Payment {
+  id              String   @id @default(cuid())
+  reference       String   @unique
+  orderType       String   // "BOOK_ORDER", "SESSION_BOOKING", "EVENT_TICKET"
+  orderId         String   // Reference to the order/booking
+  amount          Decimal  @db.Decimal(10, 2)
+  currency        String   @default("ZAR")
+  status          String   @default("PENDING") // PENDING, SUCCESSFUL, FAILED, REFUNDED
+  gateway         String   // "PayFast", "Yoco", "Stripe", "BankTransfer"
+  gatewayResponse String?  @db.Text // Raw response from payment gateway
+  customerEmail   String
+  customerName    String
+  metadata        Json?    // Additional payment data
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("payments")
+}
+
+// EVENTS (ENHANCED)
+model Event {
+  id              String        @id @default(cuid())
+  title           String
+  description     String
+  eventDate       DateTime
+  eventTime       String
+  endDate         DateTime?     // For multi-day events
+  endTime         String?
+  
+  location        String
+  venue           String?
+  address         String?
+  isVirtual       Boolean       @default(false)
+  meetingLink     String?
+  
+  // Event details
+  category        String        // "workshop", "seminar", "retreat", "masterclass"
+  capacity        Int
+  ticketsSold     Int           @default(0)
+  ticketPrice     Decimal       @db.Decimal(10, 2)
+  
+  // Images
+  posterImageUrl  String?
+  galleryImages   String[]      // Multiple images
+  
+  status          String        @default("UPCOMING") // UPCOMING, ONGOING, COMPLETED, CANCELLED
+  isFeatured      Boolean       @default(false)
+  
+  tickets         EventTicket[]
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@map("events")
+}
+
+// EVENT TICKETS (ENHANCED WITH PAYFAST)
+model EventTicket {
+  id              String   @id @default(cuid())
+  ticketNumber    String   @unique
+  eventId         String
+  event           Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  attendeeName    String
+  attendeeEmail   String
+  attendeePhone   String?
+  quantity        Int      @default(1)
+  totalAmount     Decimal  @db.Decimal(10, 2)
+  paymentStatus   String   @default("PENDING")
+  status          String   @default("ACTIVE") // ACTIVE, CHECKED_IN, CANCELLED
+  specialRequests String?
+  dietaryNeeds    String?  // For events with catering
+  companyName     String?
+  jobTitle        String?
+  
+  // PayFast Integration
+  payfastPaymentId    String?   // PayFast payment ID
+  payfastMerchantId   String?   // Merchant ID
+  payfastReference    String?   // PayFast reference
+  paymentMethod       String?   // "card", "eft", "snapscan", "zapper", "bank_transfer"
+  paymentVerifiedAt   DateTime? // When PayFast confirmed
+  paymentCanceled     Boolean   @default(false)
+  cancelReason        String?
+  
+  // Virtual event access
+  virtualAccessSent Boolean @default(false)
+  virtualLink       String?
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("event_tickets")
+}
+
+// BLOG POSTS (optional - future)
+model BlogPost {
+  id            String    @id @default(cuid())
+  title         String
+  slug          String    @unique
+  content       String
+  excerpt       String?
+  coverImageUrl String?
+  author        String?
+  category      String?
+  tags          String[]
+  isPublished   Boolean   @default(false)
+  publishedAt   DateTime?
+  views         Int       @default(0)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@map("blog_posts")
+}
+
+// SPEAKING REQUESTS (ENHANCED)
+model SpeakingRequest {
+  id              String          @id @default(cuid())
+  requestNumber   String          @unique
+  organization    String
+  contactPerson   String
+  email           String
+  phone           String?
+  eventName       String
+  eventDate       DateTime?
+  eventType       String          // "conference", "workshop", "seminar", "retreat"
+  audienceSize    Int?
+  duration        Int?            // In minutes
+  budget          Decimal?        @db.Decimal(10, 2)
+  location        String
+  isVirtual       Boolean         @default(false)
+  description     String          @db.Text
+  status          String          @default("PENDING") // PENDING, REVIEWED, ACCEPTED, DECLINED
+  notes           String?         @db.Text
+  respondedById   String?
+  respondedBy     AdminUser?      @relation(fields: [respondedById], references: [id])
+  responseDate    DateTime?
+  responseNotes   String?         @db.Text
+  
+  // If accepted, link to a booking
+  bookingId       String?         @unique
+  booking         SessionBooking? @relation(fields: [bookingId], references: [id])
+  
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  @@map("speaking_requests")
+}
+
+// SYSTEM CONFIGURATION
+model SystemConfig {
+  id              String   @id @default(cuid())
+  key             String   @unique
+  value           String
+  category        String   @default("payment")
+  description     String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  @@map("system_config")
+}

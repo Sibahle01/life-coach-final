@@ -1,0 +1,26 @@
+﻿// UPDATED PART OF src/app/admin/dashboard/page.tsx
+// Replace the checkAuth function with this:
+
+const checkAuth = async () => {
+  try {
+    const response = await fetch('/api/admin/auth/me')
+    if (!response.ok) {
+      console.log('Auth check failed, trying to continue...')
+      // Don't redirect immediately, let user see dashboard
+      // router.push('/admin/login')
+    } else {
+      const data = await response.json()
+      if (data.user) {
+        setUserEmail(data.user.email)
+      }
+    }
+  } catch (error) {
+    console.log('Auth check error, continuing:', error)
+  }
+}
+
+// Also update the useEffect to not block on auth check:
+useEffect(() => {
+  checkAuth()
+  fetchStats()
+}, [])

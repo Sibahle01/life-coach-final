@@ -1,0 +1,133 @@
+﻿@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-charcoal-light;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html {
+    @apply scroll-smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-cream text-charcoal;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Improved mobile touch targets */
+  button, 
+  a, 
+  [role="button"],
+  input, 
+  select {
+    @apply min-h-[44px] min-w-[44px];
+  }
+}
+
+@layer components {
+  /* Safe area padding for notched phones */
+  .safe-area-top {
+    padding-top: env(safe-area-inset-top);
+  }
+
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  /* Container utilities */
+  .container-mobile {
+    @apply px-4 xs:px-6;
+  }
+
+  /* Button styles with active states */
+  .btn-gold {
+    @apply bg-gold text-forest font-bold px-6 py-3 rounded-full 
+           transition-all duration-300 hover:bg-gold-light 
+           hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-forest {
+    @apply bg-forest text-cream font-bold px-6 py-3 rounded-full 
+           transition-all duration-300 hover:bg-forest-light 
+           hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-outline-gold {
+    @apply border-2 border-gold text-gold font-bold px-6 py-3 rounded-full 
+           transition-all duration-300 hover:bg-gold hover:text-forest 
+           hover:scale-105 active:scale-95
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  /* Card styles */
+  .card {
+    @apply bg-white rounded-2xl border border-cream-dark shadow-sm 
+           transition-all duration-300 hover:shadow-lg;
+  }
+
+  .card-hover {
+    @apply hover:shadow-xl hover:border-gold-light hover:scale-[1.02];
+  }
+}
+
+@layer utilities {
+  /* Hide scrollbar but keep functionality */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Better touch scrolling on iOS */
+  .touch-pan-x {
+    touch-action: pan-x;
+  }
+
+  .touch-pan-y {
+    touch-action: pan-y;
+  }
+
+  /* Animation delays */
+  .animation-delay-100 {
+    animation-delay: 100ms;
+  }
+  
+  .animation-delay-200 {
+    animation-delay: 200ms;
+  }
+
+  /* Text balance for better readability */
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+/* Custom scrollbar for desktop */
+@media (min-width: 768px) {
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-cream-dark;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-gold/30 rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-gold/50;
+  }
+}

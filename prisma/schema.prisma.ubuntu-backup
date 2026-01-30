@@ -1,0 +1,104 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url       = env("DATABASE_URL")
+}
+
+// MODELS ONLY
+
+model MenuItem {
+  id            String    @id @default(cuid())
+  name          String
+  description   String
+  price         Decimal   @db.Decimal(10, 2)
+  category      String
+  imageUrl      String?
+  isFeatured    Boolean   @default(false)
+  isVegetarian  Boolean   @default(false)
+  isSpicy       Boolean   @default(false)
+  isAvailable   Boolean   @default(true)
+  order         Int       @default(0)
+  orderItems    OrderItem[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  @@map("menu_items")
+}
+
+model AdminUser {
+  id        String    @id @default(cuid())
+  email     String    @unique
+  password  String
+  name      String?
+  role      String    @default("MANAGER")
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@map("admin_users")
+}
+
+// Updated Reservation model using the requested field names
+model Reservation {
+  id              String    @id @default(cuid())
+  customerName    String
+  customerEmail   String
+  customerPhone   String?
+  reservationDate DateTime // Using DateTime for the date field
+  partySize       Int       @map("guests") // Re-mapping 'guests' from the existing schema to 'partySize'
+  time            String    // Retaining 'time' from the existing schema
+  specialRequests String?
+  status          String    @default("PENDING") 
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  @@map("reservations")
+}
+
+model Order {
+  id              String    @id @default(cuid())
+  orderNumber     String    @unique
+  orderType       String
+  status          String    @default("PENDING")
+  subtotal        Decimal   @db.Decimal(10, 2)
+  tax             Decimal   @db.Decimal(10, 2)
+  total           Decimal   @db.Decimal(10, 2)
+  name            String
+  email           String
+  phone           String
+  specialRequests String?
+  items           OrderItem[]
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  @@map("orders")
+}
+
+model OrderItem {
+  id                    String  @id @default(cuid())
+  orderId               String
+  order                 Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  menuItemId            String
+  menuItem              MenuItem @relation(fields: [menuItemId], references: [id])
+  quantity              Int
+  price                 Decimal @db.Decimal(10, 2)
+  specialInstructions   String?
+  createdAt             DateTime @default(now())
+  
+  @@map("order_items")
+}
+
+// NEW GALLERY IMAGE MODEL
+model GalleryImage {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  imageUrl    String
+  category    String   // 'ambiance', 'food', 'events', 'people', etc.
+  isVisible   Boolean  @default(true)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

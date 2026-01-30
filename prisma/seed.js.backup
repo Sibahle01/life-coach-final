@@ -1,0 +1,194 @@
+const { PrismaClient } = require('@prisma/client');
+const bcrypt = require('bcryptjs');
+
+const prisma = new PrismaClient();
+
+async function main() {
+  console.log('🌱 Starting Life Coach Platform seeding...\n');
+
+  // 1. Clear existing data
+  console.log('🗑️  Clearing existing data...');
+  await prisma.blogPost.deleteMany();
+  await prisma.availabilitySlot.deleteMany();
+  await prisma.eventTicket.deleteMany();
+  await prisma.event.deleteMany();
+  await prisma.bookOrderItem.deleteMany();
+  await prisma.bookOrder.deleteMany();
+  await prisma.book.deleteMany();
+  await prisma.sessionBooking.deleteMany();
+  await prisma.service.deleteMany();
+  await prisma.adminUser.deleteMany();
+  console.log('✅ Database cleared\n');
+
+  // 2. Create Admin User
+  console.log('👤 Creating Admin User...');
+  const hashedPassword = await bcrypt.hash('LifeCoachDB2024!', 10);
+  
+  const admin = await prisma.adminUser.create({
+    data: {
+      email: 'admin@lifecoach.co.za',
+      password: hashedPassword,
+      name: 'Admin User',
+      role: 'ADMIN'
+    }
+  });
+  console.log('✅ Admin created:', admin.email);
+
+  // 3. Create Services
+  console.log('\n💼 Creating Coaching Services...');
+  const services = await Promise.all([
+    prisma.service.create({
+      data: {
+        name: '1-Hour Discovery Session',
+        description: 'Initial consultation to understand your goals, challenges, and create a personalized roadmap. Perfect for first-time clients.',
+        duration: 60,
+        price: 800.00,
+        format: 'both',
+        isFeatured: true,
+        order: 1
+      }
+    }),
+    prisma.service.create({
+      data: {
+        name: '2-Hour Deep Dive Coaching',
+        description: 'Intensive breakthrough session focusing on specific challenges. Includes actionable strategies and follow-up plan.',
+        duration: 120,
+        price: 1500.00,
+        format: 'both',
+        isFeatured: true,
+        order: 2
+      }
+    }),
+    prisma.service.create({
+      data: {
+        name: 'Virtual Coffee Chat (30min)',
+        description: 'Quick check-in session for ongoing clients. Perfect for accountability and course correction.',
+        duration: 30,
+        price: 400.00,
+        format: 'virtual',
+        order: 3
+      }
+    }),
+    prisma.service.create({
+      data: {
+        name: '6-Week Transformation Program',
+        description: 'Comprehensive coaching package with weekly sessions, email support, and personalized resources.',
+        duration: 60,
+        price: 4200.00,
+        format: 'both',
+        order: 4
+      }
+    })
+  ]);
+  console.log(`✅ Created ${services.length} services`);
+
+  // 4. Create Books
+  console.log('\n📚 Creating Books...');
+  const books = await Promise.all([
+    prisma.book.create({
+      data: {
+        title: 'The Path to Purpose',
+        description: 'A transformative guide to discovering your life\'s calling and living with intention. Includes practical exercises and real-life case studies.',
+        price: 250.00,
+        format: 'physical',
+        stockQuantity: 50,
+        isFeatured: true,
+        fulfillmentType: 'manual',
+        order: 1
+      }
+    }),
+    prisma.book.create({
+      data: {
+        title: 'Mindset Mastery Workbook',
+        description: 'Practical exercises and worksheets to reprogram limiting beliefs and unlock your full potential.',
+        price: 180.00,
+        format: 'physical',
+        stockQuantity: 30,
+        fulfillmentType: 'manual',
+        order: 2
+      }
+    }),
+    prisma.book.create({
+      data: {
+        title: 'Breaking Through: Stories of Transformation',
+        description: 'Inspiring real-life stories of individuals who overcame adversity and achieved extraordinary success.',
+        price: 220.00,
+        format: 'both',
+        stockQuantity: 25,
+        fulfillmentType: 'manual',
+        order: 3
+      }
+    })
+  ]);
+  console.log(`✅ Created ${books.length} books`);
+
+  // 5. Create Sample Events
+  console.log('\n🎟️  Creating Events...');
+  const futureDate1 = new Date();
+  futureDate1.setDate(futureDate1.getDate() + 30);
+
+  const futureDate2 = new Date();
+  futureDate2.setDate(futureDate2.getDate() + 60);
+
+  const events = await Promise.all([
+    prisma.event.create({
+      data: {
+        title: 'Leadership Breakthrough Workshop',
+        description: 'A full-day intensive workshop for emerging leaders ready to step into their power. Limited to 50 participants for personalized attention.',
+        eventDate: futureDate1,
+        eventTime: '09:00',
+        location: 'Sandton Convention Centre, Johannesburg',
+        venue: 'Sandton Convention Centre - Hall A',
+        capacity: 50,
+        ticketPrice: 1200.00,
+        isVirtual: false,
+        status: 'UPCOMING'
+      }
+    }),
+    prisma.event.create({
+      data: {
+        title: 'Virtual Mindfulness Masterclass',
+        description: 'Learn powerful mindfulness techniques to reduce stress and increase focus. Includes lifetime access to recordings.',
+        eventDate: futureDate2,
+        eventTime: '18:00',
+        location: 'Virtual Event',
+        venue: 'Zoom',
+        capacity: 100,
+        ticketPrice: 450.00,
+        isVirtual: true,
+        meetingLink: 'https://zoom.us/j/example',
+        status: 'UPCOMING'
+      }
+    })
+  ]);
+  console.log(`✅ Created ${events.length} events`);
+
+  console.log('\n' + '='.repeat(60));
+  console.log('🎉 Life Coach Platform seeding completed!');
+  console.log('='.repeat(60));
+
+  console.log('\n📊 SEEDING SUMMARY:');
+  console.log(`   • Admin Users: 1`);
+  console.log(`   • Services: ${services.length}`);
+  console.log(`   • Books: ${books.length}`);
+  console.log(`   • Events: ${events.length}`);
+
+  console.log('\n🚀 NEXT STEPS:');
+  console.log('   1. Run: npm run dev');
+  console.log('   2. Visit: http://localhost:3000');
+  console.log('   3. Admin Login: http://localhost:3000/admin/login');
+
+  console.log('\n🔑 ADMIN CREDENTIALS:');
+  console.log('   Email: admin@lifecoach.co.za');
+  console.log('   Password: LifeCoachDB2024!');
+  console.log('='.repeat(60) + '\n');
+}
+
+main()
+  .catch((e) => {
+    console.error('\n❌ SEEDING ERROR:', e);
+    process.exit(1);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });

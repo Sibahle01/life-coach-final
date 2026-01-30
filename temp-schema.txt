@@ -1,0 +1,16 @@
+﻿model AdminUser {
+  id        String    @id @default(cuid())
+  email     String    @unique
+  password  String
+  name      String?
+  role      AdminRole @default(MANAGER)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@map(\"admin_users\")
+}
+
+enum AdminRole {
+  MANAGER
+  STAFF
+}
