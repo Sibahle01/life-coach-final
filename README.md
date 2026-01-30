@@ -163,3 +163,22 @@ This is a private project. Contact the repository owner for contribution guideli
 ##  License
 
 All Rights Reserved - Ubuntu Garden Lounge Restaurant
+
+##  Security Notes
+
+### NEVER COMMIT:
+- `.env` or `.env.local` files
+- API keys, database passwords, or secrets
+- PayFast merchant credentials
+- Any file containing "password", "key", or "secret"
+
+### Setup Instructions:
+1. Copy `.env.example` to `.env.local`
+2. Fill in your actual credentials
+3. `.env.local` is in `.gitignore` and will NOT be committed
+4. All API calls should use environment variables
+
+### If you accidentally commit credentials:
+1. IMMEDIATELY change/rotate those credentials
+2. Use `git filter-branch` to remove from history
+3. Force push: `git push origin main --force`
