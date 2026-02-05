@@ -254,29 +254,60 @@ export default function BookOrdersPage() {
     }
   }
 
-  const handleSendEbook = async (orderId: string, customerEmail: string) => {
+  const handleSendEbook = async (orderId: string, customerEmail: string, customerName: string) => {
     if (!confirm(`Send eBook download link to ${customerEmail}?`)) return
 
     try {
-      const response = await fetch(`/api/book-orders/${orderId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+      // Get order details
+      const orderResponse = await fetch(`/api/book-orders/${orderId}`)
+      if (!orderResponse.ok) throw new Error('Failed to fetch order')
+      const order = await orderResponse.json()
+      
+      // Generate download token
+      const token = `dl_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+      const downloadUrl = `${window.location.origin}/api/download/${token}`
+      
+      // Send email
+      const emailResponse = await fetch('/api/emails/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          status: 'DELIVERED',
+          type: 'ebook-delivery',
+          data: {
+            customerName: customerName,
+            customerEmail: customerEmail,
+            bookTitle: 'Circle of Seven',
+            downloadUrl: downloadUrl,
+            expiresInDays: 30
+          }
+        })
+      })
+      
+      if (!emailResponse.ok) {
+        const error = await emailResponse.json()
+        throw new Error(error.error || 'Failed to send email')
+      }
+      
+      // Update order status
+      const updateResponse = await fetch(`/api/book-orders/${orderId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
           ebookDelivered: true,
           ebookDeliveryDate: new Date().toISOString()
         })
       })
 
-      if (!response.ok) {
-        throw new Error('Failed to send eBook')
+      if (!updateResponse.ok) {
+        throw new Error('Failed to update order status')
       }
 
-      alert(`eBook download link sent to ${customerEmail}`)
+      alert(`✅ eBook download link sent to ${customerEmail}`)
       fetchOrders()
+      
     } catch (err) {
+      console.error('Send eBook error:', err)
+      alert(`Failed to send eBook: ${err instanceof Error ? err.message : 'Unknown error'}`)
       setError(err instanceof Error ? err.message : 'Failed to send eBook')
     }
   }
@@ -602,7 +633,7 @@ export default function BookOrdersPage() {
                         </button>
                         {hasEbooks(order) && !order.ebookDelivered && order.status !== 'CANCELLED' && (
                           <button
-                            onClick={() => handleSendEbook(order.id, order.customerEmail)}
+                            onClick={() => handleSendEbook(order.id, order.customerEmail, order.customerName)}
                             className="px-3 py-1.5 text-sm bg-green-100 text-green-700 hover:bg-green-200 font-medium rounded-lg transition-colors"
                           >
                             Send eBook

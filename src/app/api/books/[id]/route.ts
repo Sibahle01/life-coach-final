@@ -92,6 +92,12 @@ export async function PUT(request: NextRequest, { params }: Params) {
 // DELETE book
 export async function DELETE(request: NextRequest, { params }: Params) {
   try {
+    // First, delete all BookOrderItems that reference this book
+    await prisma.bookOrderItem.deleteMany({
+      where: { bookId: params.id }
+    })
+    
+    // Then delete the book
     await prisma.book.delete({
       where: { id: params.id }
     })
