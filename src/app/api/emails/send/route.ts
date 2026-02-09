@@ -18,6 +18,22 @@ export async function POST(request: NextRequest) {
       case 'book-order-confirmation':
         template = emailTemplates.bookOrderConfirmation(data)
         break
+
+      case 'event-ticket':
+        template = emailTemplates.eventTicket(data)
+        break
+
+      case 'booking-confirmation':
+        template = emailTemplates.bookingConfirmation(data)
+        break
+
+      case 'booking-reminder':
+        template = emailTemplates.bookingReminder(data)
+        break
+
+      case 'speaking-request':
+        template = emailTemplates.newSpeakingRequest(data)
+        break
         
       default:
         return NextResponse.json(
@@ -26,8 +42,18 @@ export async function POST(request: NextRequest) {
         )
     }
     
+    // Attempt to find a recipient email in common data fields
+    const recipientEmail = data.attendeeEmail || data.customerEmail || data.clientEmail || data.contactEmail || data.to
+
+    if (!recipientEmail) {
+      return NextResponse.json(
+        { error: 'Recipient email address is missing' },
+        { status: 400 }
+      )
+    }
+
     const result = await sendEmail({
-      to: data.customerEmail || data.to,
+      to: recipientEmail,
       subject: template.subject,
       html: template.html
     })

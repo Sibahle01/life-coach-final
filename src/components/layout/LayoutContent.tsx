@@ -4,7 +4,6 @@
 import { usePathname } from 'next/navigation'
 import MobileNavigation from '@/components/layout/MobileNavigation'
 import Footer from '@/components/layout/Footer'
-import CartSidebar from '@/components/cart/CartSidebar'
 
 export default function LayoutContent({
   children,
@@ -16,20 +15,19 @@ export default function LayoutContent({
   // Check if current route is an admin route
   const isAdminRoute = pathname?.startsWith('/admin')
 
-  // If admin route, render children only (no navbar, footer, cart)
+  // If admin route, render children only (no navbar, footer)
   if (isAdminRoute) {
-    return <main className="min-h-screen">{children}</main>
+    return <main className="min-h-screen bg-white">{children}</main>
   }
 
-  // For public routes, render with navbar, footer, and cart
+  // For public routes, render with navbar and footer
   return (
     <>
       <MobileNavigation />
-      <main className="min-h-screen">
+      <main className="min-h-screen bg-white">
         {children}
       </main>
       <Footer />
-      <CartSidebar />
     </>
   )
 }

@@ -1,9 +1,10 @@
-﻿// src/app/page.tsx
+﻿// src/app/page.tsx (FINAL VERSION)
 'use client';
 
 import HeroSection from "@/components/sections/HeroSection";
-import FeaturedMenu from "@/components/sections/FeaturedMenu";
-import GallerySection from '@/components/sections/GallerySection';
+import AboutBooksSection from "@/components/sections/AboutBooksSection";
+import ServicesSection from "@/components/sections/ServicesSection";
+import EventsSection from "@/components/sections/EventsSection";
 
 export default function Home() {
   return (
@@ -11,17 +12,19 @@ export default function Home() {
       {/* Hero Section */}
       <HeroSection 
         backgroundImage="/images/hero/main-background.jpg"
-        backgroundAlt="Ubuntu Garden Lounge ambiance"
+        backgroundAlt="Pastor Sifiso Nkabinde - Spiritual Leadership Coach"
         showPatterns={true}
       />
       
-      {/* Featured Menu Section */}
-      <FeaturedMenu />
+      {/* About & Books Section */}
+      <AboutBooksSection />
       
-      {/* Gallery Section - Experience African Elegance */}
-      <GallerySection />
+      {/* Services Section */}
+      <ServicesSection />
       
-      {/* Page ends here - Footer will follow automatically */}
+      {/* Events Section */}
+      <EventsSection />
+      
     </>
   );
 }
