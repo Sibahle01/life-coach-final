@@ -1,3 +1,4 @@
+// /src/app/admin/session-bookings/[id]/page.tsx
 'use client'
 
 import { useState, useEffect } from 'react'
@@ -234,7 +235,7 @@ export default function BookingDetailPage() {
             value={booking.status}
             onChange={(e) => handleStatusChange(e.target.value)}
             disabled={updating}
-            className="px-4 py-2 rounded-lg border border-gray-300 bg-white disabled:opacity-50"
+            className="px-4 py-2 rounded-lg border border-gray-300 bg-white text-gray-900 focus:ring-2 focus:ring-gray-900 focus:border-transparent disabled:opacity-50"
           >
             <option value="PENDING">Pending</option>
             <option value="CONFIRMED">Confirmed</option>
@@ -269,12 +270,12 @@ export default function BookingDetailPage() {
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                <label className="block text-sm font-medium text-gray-600 mb-1">Name</label>
                 <div className="text-gray-900 font-medium">{booking.clientName}</div>
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-1">
+                <label className="block text-sm font-medium text-gray-600 mb-1 flex items-center gap-1">
                   <Mail className="h-4 w-4" />
                   Email
                 </label>
@@ -282,7 +283,7 @@ export default function BookingDetailPage() {
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-1">
+                <label className="block text-sm font-medium text-gray-600 mb-1 flex items-center gap-1">
                   <Phone className="h-4 w-4" />
                   Phone
                 </label>
@@ -290,7 +291,7 @@ export default function BookingDetailPage() {
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Attendees</label>
+                <label className="block text-sm font-medium text-gray-600 mb-1">Attendees</label>
                 <div className="text-gray-900 font-medium">{booking.attendees} person(s)</div>
               </div>
             </div>
@@ -323,7 +324,7 @@ export default function BookingDetailPage() {
               </h2>
               
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-1">
+                <label className="block text-sm font-medium text-gray-600 mb-1 flex items-center gap-1">
                   <MapPin className="h-4 w-4" />
                   Client Address
                 </label>
@@ -351,7 +352,7 @@ export default function BookingDetailPage() {
                   ) : (
                     <div className="space-y-4">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-sm font-medium text-gray-600 mb-2">
                           Enter travel distance (km)
                         </label>
                         <div className="flex items-center gap-2">
@@ -363,7 +364,7 @@ export default function BookingDetailPage() {
                             value={travelDistance}
                             onChange={(e) => setTravelDistance(e.target.value)}
                             placeholder="e.g., 15.5"
-                            className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900 placeholder:text-gray-500"
                           />
                           <span className="text-gray-600">km</span>
                         </div>
@@ -430,7 +431,7 @@ export default function BookingDetailPage() {
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Meeting Type</label>
+                <label className="block text-sm font-medium text-gray-600 mb-1">Meeting Type</label>
                 <div className="flex items-center gap-2">
                   {booking.meetingType === 'virtual' ? (
                     <>
@@ -452,7 +453,7 @@ export default function BookingDetailPage() {
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Date & Time</label>
+                <label className="block text-sm font-medium text-gray-600 mb-1">Date & Time</label>
                 <div className="flex items-center gap-2">
                   <Calendar className="h-4 w-4 text-gray-500" />
                   <span className="text-gray-900 font-medium">{formatDate(booking.bookingDate)}</span>
@@ -464,18 +465,18 @@ export default function BookingDetailPage() {
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Duration</label>
+                <label className="block text-sm font-medium text-gray-600 mb-1">Duration</label>
                 <div className="text-gray-900 font-medium">{booking.duration} minutes</div>
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Format</label>
-                <div className="text-gray-900 font-medium">{booking.format}</div>
+                <label className="block text-sm font-medium text-gray-600 mb-1">Format</label>
+                <div className="text-gray-900 font-medium capitalize">{booking.format}</div>
               </div>
               
               {booking.meetingLink && (
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Meeting Link</label>
+                  <label className="block text-sm font-medium text-gray-600 mb-1">Meeting Link</label>
                   <a 
                     href={booking.meetingLink} 
                     target="_blank" 
@@ -533,7 +534,7 @@ export default function BookingDetailPage() {
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 rows={4}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900 placeholder:text-gray-500"
                 placeholder="Add notes about this booking..."
               />
             ) : (
@@ -613,7 +614,7 @@ export default function BookingDetailPage() {
               <button
                 onClick={() => handleStatusChange('CONFIRMED')}
                 disabled={updating || booking.status === 'CONFIRMED'}
-                className="w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
               >
                 {updating ? 'Updating...' : 'Mark as Confirmed'}
               </button>
@@ -621,7 +622,7 @@ export default function BookingDetailPage() {
               <button
                 onClick={() => handleStatusChange('COMPLETED')}
                 disabled={updating || booking.status === 'COMPLETED'}
-                className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
               >
                 {updating ? 'Updating...' : 'Mark as Completed'}
               </button>
@@ -629,14 +630,14 @@ export default function BookingDetailPage() {
               <button
                 onClick={() => handleStatusChange('CANCELLED')}
                 disabled={updating || booking.status === 'CANCELLED'}
-                className="w-full px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="w-full px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
               >
                 {updating ? 'Updating...' : 'Mark as Cancelled'}
               </button>
               
               <div className="pt-4 border-t border-gray-200">
                 <p className="text-sm text-gray-600 mb-2">Booking Created</p>
-                <p className="text-gray-900">
+                <p className="text-gray-900 font-medium">
                   {new Date(booking.createdAt).toLocaleDateString('en-ZA', {
                     year: 'numeric',
                     month: 'short',
@@ -663,7 +664,7 @@ export default function BookingDetailPage() {
       <div className="mt-8 pt-6 border-t border-gray-200 flex justify-between">
         <Link
           href="/admin/session-bookings"
-          className="px-6 py-3 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors flex items-center gap-2"
+          className="px-6 py-3 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors flex items-center gap-2 font-medium"
         >
           <ArrowLeft className="h-5 w-5" />
           Back to Bookings
@@ -673,7 +674,7 @@ export default function BookingDetailPage() {
           <button
             onClick={fetchBooking}
             disabled={updating}
-            className="px-6 py-3 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors flex items-center gap-2 disabled:opacity-50"
+            className="px-6 py-3 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors flex items-center gap-2 disabled:opacity-50 font-medium"
           >
             {updating ? (
               <Loader className="h-5 w-5 animate-spin" />

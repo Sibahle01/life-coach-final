@@ -2,8 +2,23 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { motion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { 
+  ChevronLeft, 
+  ShoppingCart, 
+  Truck, 
+  Download, 
+  CreditCard,
+  CheckCircle,
+  MapPin,
+  User,
+  Mail,
+  Phone,
+  FileText,
+  AlertCircle
+} from 'lucide-react'
 
 interface CartItem {
   id: string
@@ -13,19 +28,19 @@ interface CartItem {
   price: number
   format: string
   quantity: number
+  coverImageUrl?: string
 }
 
 interface CheckoutForm {
   customerName: string
   customerEmail: string
   customerPhone: string
-  
-  // Shipping - only required for physical books
   shippingAddress: string
   shippingCity: string
   shippingProvince: string
   shippingPostalCode: string
   shippingCountry: string
+  notes: string
 }
 
 export default function CheckoutPage() {
@@ -46,7 +61,8 @@ export default function CheckoutPage() {
     shippingCity: '',
     shippingProvince: '',
     shippingPostalCode: '',
-    shippingCountry: 'South Africa'
+    shippingCountry: 'South Africa',
+    notes: ''
   })
 
   useEffect(() => {
@@ -64,6 +80,7 @@ export default function CheckoutPage() {
   }
 
   const hasPhysicalBooks = cart.some(item => item.format === 'physical')
+  const allEbooks = cart.every(item => item.format === 'ebook')
 
   const calculateTotals = () => {
     const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0)
@@ -82,30 +99,27 @@ export default function CheckoutPage() {
   const { subtotal, shipping, tax, total } = calculateTotals()
 
   const formatCurrency = (amount: number) => {
-    return `R ${amount.toFixed(2)}`
+    return `R${amount.toFixed(2)}`
   }
 
-  const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
     setForm(prev => ({ ...prev, [name]: value }))
   }
 
   const validateForm = () => {
     const errors: string[] = []
-
-    if (!form.customerName.trim()) errors.push('Name is required')
-    if (!form.customerEmail.trim()) errors.push('Email is required')
-    if (!form.customerPhone.trim()) errors.push('Phone number is required')
+    if (!form.customerName.trim()) errors.push('Name required')
+    if (!form.customerEmail.trim()) errors.push('Email required')
+    if (!form.customerPhone.trim()) errors.push('Phone required')
     
     if (hasPhysicalBooks) {
-      if (!form.shippingAddress.trim()) errors.push('Shipping address is required')
-      if (!form.shippingCity.trim()) errors.push('City is required')
-      if (!form.shippingProvince.trim()) errors.push('Province is required')
-      if (!form.shippingPostalCode.trim()) errors.push('Postal code is required')
+      if (!form.shippingAddress.trim()) errors.push('Address required')
+      if (!form.shippingCity.trim()) errors.push('City required')
+      if (!form.shippingProvince.trim()) errors.push('Province required')
+      if (!form.shippingPostalCode.trim()) errors.push('Postal code required')
     }
-
-    if (cart.length === 0) errors.push('Your cart is empty')
-
+    if (cart.length === 0) errors.push('Cart empty')
     return errors
   }
 
@@ -114,7 +128,7 @@ export default function CheckoutPage() {
     
     const errors = validateForm()
     if (errors.length > 0) {
-      setError(errors.join(', '))
+      setError(errors.join(' • '))
       return
     }
 
@@ -122,7 +136,6 @@ export default function CheckoutPage() {
     setError('')
 
     try {
-      // Prepare order data for YOUR API
       const orderData = {
         customerName: form.customerName,
         customerEmail: form.customerEmail,
@@ -140,6 +153,7 @@ export default function CheckoutPage() {
         status: 'PENDING',
         paymentStatus: 'PENDING',
         currency: 'ZAR',
+        notes: form.notes || null,
         items: cart.map(item => ({
           bookId: item.bookId,
           quantity: item.quantity,
@@ -148,27 +162,21 @@ export default function CheckoutPage() {
         }))
       }
 
-      // Send to YOUR Book Orders API
       const response = await fetch('/api/book-orders', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(orderData),
       })
 
       if (!response.ok) {
         const errorData = await response.json()
-        throw new Error(errorData.error || 'Failed to create order')
+        throw new Error(errorData.error || 'Order failed')
       }
 
       const order = await response.json()
       
-      // Save order number and clear cart
       setOrderNumber(order.orderNumber)
       setOrderCreated(true)
-      
-      // Clear the cart
       localStorage.removeItem('book-cart')
       
     } catch (err) {
@@ -185,29 +193,27 @@ export default function CheckoutPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="w-10 h-10 border-2 border-gray-200 border-t-black rounded-full animate-spin"></div>
       </div>
     )
   }
 
   if (cart.length === 0 && !orderCreated) {
     return (
-      <div className="min-h-screen bg-gray-50 py-8">
-        <div className="max-w-4xl mx-auto px-4">
-          <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
-            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-              </svg>
+      <div className="min-h-screen bg-white">
+        <div className="relative max-w-7xl mx-auto px-4 pt-20 pb-16">
+          <div className="bg-white border border-gray-200 rounded-lg p-8 text-center max-w-md mx-auto">
+            <div className="w-14 h-14 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
+              <ShoppingCart size={22} className="text-gray-400" />
             </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">Your cart is empty</h3>
-            <p className="text-gray-600 mb-6">Add some books to checkout</p>
+            <p className="text-gray-600 text-sm mb-5">Your cart is empty</p>
             <Link
               href="/books"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-gray-900 text-white rounded-lg hover:bg-black transition-colors"
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-black text-white text-sm rounded-lg hover:bg-gray-900 transition-colors"
             >
-              Browse Books
+              <span>Browse Books</span>
+              <ChevronLeft size={16} className="rotate-180" />
             </Link>
           </div>
         </div>
@@ -217,340 +223,403 @@ export default function CheckoutPage() {
 
   if (orderCreated) {
     return (
-      <div className="min-h-screen bg-gray-50 py-8">
-        <div className="max-w-4xl mx-auto px-4">
-          <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
-            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-              </svg>
+      <div className="min-h-screen bg-white">
+        <div className="relative max-w-7xl mx-auto px-4 pt-20 pb-16">
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-white border border-gray-200 rounded-lg p-6 md:p-8 max-w-lg mx-auto"
+          >
+            <div className="flex justify-center mb-4">
+              <div className="w-12 h-12 bg-gray-900 rounded-full flex items-center justify-center">
+                <CheckCircle size={22} className="text-white" />
+              </div>
             </div>
             
-            <h1 className="text-3xl font-bold text-gray-900 mb-4">Order Confirmed!</h1>
-            <p className="text-gray-600 mb-6">
-              Thank you for your order. Your order number is:
+            <h1 className="text-xl font-light text-gray-900 text-center mb-1">
+              Order Confirmed
+            </h1>
+            <p className="text-xs text-gray-500 text-center mb-5">
+              #{orderNumber}
             </p>
             
-            <div className="inline-block px-6 py-3 bg-gray-100 rounded-lg mb-6">
-              <span className="text-xl font-bold text-gray-900 font-mono">#{orderNumber}</span>
-            </div>
-            
-            <div className="space-y-4 text-left max-w-md mx-auto mb-8">
-              <div className="p-4 bg-blue-50 border border-blue-100 rounded-lg">
-                <div className="flex items-start gap-2">
-                  <svg className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  <div>
-                    <h4 className="font-medium text-blue-900 mb-1">What happens next?</h4>
-                    <ul className="text-sm text-blue-700 space-y-1">
-                      <li>• You will receive an email confirmation</li>
-                      <li>• eBooks will be delivered instantly via email</li>
-                      <li>• Physical books will be shipped within 2-3 business days</li>
-                      <li>• You can track your order in the admin panel</li>
-                    </ul>
-                  </div>
+            <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-5">
+              <div className="flex items-start gap-3">
+                <div className="w-5 h-5 bg-gray-900/5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <AlertCircle size={12} className="text-gray-700" />
+                </div>
+                <div>
+                  <p className="text-xs font-medium text-gray-900 mb-1">What's next?</p>
+                  <ul className="text-xs text-gray-600 space-y-1">
+                    <li className="flex items-start gap-1.5">
+                      <span className="text-gray-400">•</span>
+                      <span>Email confirmation sent</span>
+                    </li>
+                    <li className="flex items-start gap-1.5">
+                      <span className="text-gray-400">•</span>
+                      <span>{allEbooks ? 'eBooks ready for download' : hasPhysicalBooks ? 'Shipping within 2-3 days' : 'Processing order'}</span>
+                    </li>
+                  </ul>
                 </div>
               </div>
             </div>
             
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <div className="flex flex-col sm:flex-row gap-3">
               <Link
                 href="/books"
-                className="px-6 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+                className="flex-1 px-4 py-2.5 bg-gray-100 text-gray-700 text-sm rounded-lg hover:bg-gray-200 transition-colors text-center"
               >
                 Continue Shopping
               </Link>
               <button
-                onClick={() => {
-                  // In future: Link to order tracking page
-                  alert('Order tracking coming soon!')
-                }}
-                className="px-6 py-3 bg-gray-900 text-white rounded-lg hover:bg-black transition-colors"
+                onClick={() => router.push('/')}
+                className="flex-1 px-4 py-2.5 bg-black text-white text-sm rounded-lg hover:bg-gray-900 transition-colors"
               >
-                Track My Order
+                Return Home
               </button>
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-7xl mx-auto px-4">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">Checkout</h1>
-          <p className="text-gray-600">Complete your purchase</p>
+    <div className="min-h-screen bg-white">
+      {/* Subtle background */}
+      <div className="absolute inset-0 opacity-[0.015] pointer-events-none">
+        <div className="absolute inset-0" style={{
+          backgroundImage: 'radial-gradient(circle at 1px 1px, black 1px, transparent 0)',
+          backgroundSize: '40px 40px'
+        }} />
+      </div>
+
+      <div className="relative max-w-7xl mx-auto px-4 pt-20 pb-16">
+        
+        {/* COMPACT HEADER */}
+        <div className="mb-5">
+          <div className="flex items-center gap-1.5 text-xs text-gray-500 mb-2">
+            <Link href="/" className="hover:text-gray-900">Home</Link>
+            <span>/</span>
+            <Link href="/books" className="hover:text-gray-900">Books</Link>
+            <span>/</span>
+            <Link href="/cart" className="hover:text-gray-900">Cart</Link>
+            <span>/</span>
+            <span className="text-gray-900">Checkout</span>
+          </div>
+          
+          <div className="flex items-center justify-between">
+            <div className="flex items-baseline gap-2">
+              <h1 className="text-xl font-light text-gray-900">Checkout</h1>
+              <p className="text-xs text-gray-500">
+                {cart.length} {cart.length === 1 ? 'item' : 'items'}
+              </p>
+            </div>
+            
+            <Link
+              href="/cart"
+              className="text-xs text-gray-500 hover:text-gray-900 flex items-center gap-1"
+            >
+              <ChevronLeft size={14} />
+              <span>Cart</span>
+            </Link>
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Checkout Form */}
-          <div className="lg:col-span-2">
-            <form onSubmit={handleSubmit} className="space-y-6">
+        {/* MOBILE: Order Summary - Sticky at top */}
+        <div className="lg:hidden sticky top-[72px] z-10 -mx-4 px-4 pt-2 pb-3 bg-white/95 backdrop-blur-sm border-b border-gray-200 mb-5">
+          <div className="flex items-center justify-between">
+            <div>
+              <span className="text-xs text-gray-500">Total</span>
+              <div className="text-xl font-light text-gray-900">{formatCurrency(total)}</div>
+            </div>
+            
+            <button
+              onClick={handleSubmit}
+              disabled={submitting}
+              className="px-5 py-2.5 bg-black text-white text-sm font-medium rounded-lg hover:bg-gray-900 active:scale-[0.98] transition-all flex items-center gap-2 disabled:opacity-50"
+            >
+              {submitting ? (
+                <div className="w-4 h-4 border border-white/30 border-t-white rounded-full animate-spin" />
+              ) : (
+                <CreditCard size={16} />
+              )}
+              <span>{submitting ? 'Processing...' : 'Place Order'}</span>
+            </button>
+          </div>
+          
+          {/* Delivery indicator */}
+          <div className="flex items-center gap-2 mt-1.5">
+            <Truck size={12} className="text-gray-400" />
+            <span className="text-[10px] text-gray-500">
+              {hasPhysicalBooks ? 'R100 shipping' : 'Free shipping'}
+            </span>
+            {allEbooks && (
+              <>
+                <span className="text-gray-300">•</span>
+                <Download size={12} className="text-gray-400" />
+                <span className="text-[10px] text-gray-500">Instant delivery</span>
+              </>
+            )}
+          </div>
+        </div>
+
+        <form onSubmit={handleSubmit}>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* LEFT COLUMN - Forms */}
+            <div className="lg:col-span-2 space-y-4">
+              
+              {/* Error message */}
               {error && (
-                <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
-                  <div className="flex items-center gap-2 text-red-700">
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
+                <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                  <div className="flex items-center gap-2 text-xs text-red-700">
+                    <AlertCircle size={14} />
                     <span>{error}</span>
                   </div>
                 </div>
               )}
 
               {/* Customer Information */}
-              <div className="bg-white rounded-xl border border-gray-200 p-6">
-                <h2 className="text-xl font-bold text-gray-900 mb-6">Customer Information</h2>
+              <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+                <div className="px-4 py-3 border-b border-gray-200 bg-gray-50/50">
+                  <div className="flex items-center gap-2">
+                    <User size={14} className="text-gray-600" />
+                    <h2 className="text-xs font-medium text-gray-700 uppercase tracking-wide">
+                      Your Details
+                    </h2>
+                  </div>
+                </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-900 mb-2">
-                      Full Name *
-                    </label>
-                    <input
-                      type="text"
-                      name="customerName"
-                      value={form.customerName}
-                      onChange={handleFormChange}
-                      required
-                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-colors"
-                      placeholder="John Doe"
-                    />
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-gray-900 mb-2">
-                      Email Address *
-                    </label>
-                    <input
-                      type="email"
-                      name="customerEmail"
-                      value={form.customerEmail}
-                      onChange={handleFormChange}
-                      required
-                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-colors"
-                      placeholder="john@example.com"
-                    />
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-gray-900 mb-2">
-                      Phone Number *
-                    </label>
-                    <input
-                      type="tel"
-                      name="customerPhone"
-                      value={form.customerPhone}
-                      onChange={handleFormChange}
-                      required
-                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-colors"
-                      placeholder="+27 12 345 6789"
-                    />
+                <div className="p-4 space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-[10px] uppercase tracking-wide text-gray-500 mb-1.5 font-medium">
+                        Full Name <span className="text-gray-900">*</span>
+                      </label>
+                      <div className="relative">
+                        <User size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                        <input
+                          type="text"
+                          name="customerName"
+                          value={form.customerName}
+                          onChange={handleFormChange}
+                          className="w-full pl-9 pr-3 py-2.5 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-gray-900 focus:border-gray-900 transition-colors text-gray-900 placeholder:text-gray-400"
+                          placeholder="John Doe"
+                        />
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <label className="block text-[10px] uppercase tracking-wide text-gray-500 mb-1.5 font-medium">
+                        Email <span className="text-gray-900">*</span>
+                      </label>
+                      <div className="relative">
+                        <Mail size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                        <input
+                          type="email"
+                          name="customerEmail"
+                          value={form.customerEmail}
+                          onChange={handleFormChange}
+                          className="w-full pl-9 pr-3 py-2.5 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-gray-900 focus:border-gray-900 transition-colors text-gray-900 placeholder:text-gray-400"
+                          placeholder="john@example.com"
+                        />
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <label className="block text-[10px] uppercase tracking-wide text-gray-500 mb-1.5 font-medium">
+                        Phone <span className="text-gray-900">*</span>
+                      </label>
+                      <div className="relative">
+                        <Phone size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                        <input
+                          type="tel"
+                          name="customerPhone"
+                          value={form.customerPhone}
+                          onChange={handleFormChange}
+                          className="w-full pl-9 pr-3 py-2.5 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-gray-900 focus:border-gray-900 transition-colors text-gray-900 placeholder:text-gray-400"
+                          placeholder="+27 12 345 6789"
+                        />
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
 
-              {/* Shipping Information - Conditionally shown */}
+              {/* Shipping Information - Only for physical books */}
               {hasPhysicalBooks && (
-                <div className="bg-white rounded-xl border border-gray-200 p-6">
-                  <h2 className="text-xl font-bold text-gray-900 mb-6">Shipping Information</h2>
+                <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+                  <div className="px-4 py-3 border-b border-gray-200 bg-gray-50/50">
+                    <div className="flex items-center gap-2">
+                      <MapPin size={14} className="text-gray-600" />
+                      <h2 className="text-xs font-medium text-gray-700 uppercase tracking-wide">
+                        Shipping Address
+                      </h2>
+                    </div>
+                  </div>
                   
-                  <div className="space-y-6">
+                  <div className="p-4 space-y-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-900 mb-2">
-                        Street Address *
+                      <label className="block text-[10px] uppercase tracking-wide text-gray-500 mb-1.5 font-medium">
+                        Street Address <span className="text-gray-900">*</span>
                       </label>
                       <input
                         type="text"
                         name="shippingAddress"
                         value={form.shippingAddress}
                         onChange={handleFormChange}
-                        required
-                        className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-colors"
+                        className="w-full px-3 py-2.5 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-gray-900 focus:border-gray-900 transition-colors text-gray-900 placeholder:text-gray-400"
                         placeholder="123 Main Street"
                       />
                     </div>
                     
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-900 mb-2">
-                          City *
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      <div className="col-span-2 md:col-span-1">
+                        <label className="block text-[10px] uppercase tracking-wide text-gray-500 mb-1.5 font-medium">
+                          City <span className="text-gray-900">*</span>
                         </label>
                         <input
                           type="text"
                           name="shippingCity"
                           value={form.shippingCity}
                           onChange={handleFormChange}
-                          required
-                          className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-colors"
+                          className="w-full px-3 py-2.5 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-gray-900 focus:border-gray-900 transition-colors text-gray-900 placeholder:text-gray-400"
                           placeholder="Johannesburg"
                         />
                       </div>
                       
-                      <div>
-                        <label className="block text-sm font-medium text-gray-900 mb-2">
-                          Province *
+                      <div className="col-span-2 md:col-span-1">
+                        <label className="block text-[10px] uppercase tracking-wide text-gray-500 mb-1.5 font-medium">
+                          Province <span className="text-gray-900">*</span>
                         </label>
                         <select
                           name="shippingProvince"
                           value={form.shippingProvince}
                           onChange={handleFormChange}
-                          required
-                          className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-colors"
+                          className="w-full px-3 py-2.5 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-gray-900 focus:border-gray-900 transition-colors text-gray-900"
                         >
-                          <option value="">Select Province</option>
-                          {provinces.map(province => (
-                            <option key={province} value={province}>{province}</option>
+                          <option value="" className="text-gray-500">Select</option>
+                          {provinces.map(p => (
+                            <option key={p} value={p} className="text-gray-900">{p}</option>
                           ))}
                         </select>
                       </div>
                       
-                      <div>
-                        <label className="block text-sm font-medium text-gray-900 mb-2">
-                          Postal Code *
+                      <div className="col-span-2 md:col-span-1">
+                        <label className="block text-[10px] uppercase tracking-wide text-gray-500 mb-1.5 font-medium">
+                          Postal Code <span className="text-gray-900">*</span>
                         </label>
                         <input
                           type="text"
                           name="shippingPostalCode"
                           value={form.shippingPostalCode}
                           onChange={handleFormChange}
-                          required
-                          className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-colors"
+                          className="w-full px-3 py-2.5 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-gray-900 focus:border-gray-900 transition-colors text-gray-900 placeholder:text-gray-400"
                           placeholder="2000"
                         />
                       </div>
-                    </div>
-                    
-                    <div>
-                      <label className="block text-sm font-medium text-gray-900 mb-2">
-                        Country
-                      </label>
-                      <input
-                        type="text"
-                        name="shippingCountry"
-                        value={form.shippingCountry}
-                        onChange={handleFormChange}
-                        className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-colors"
-                        readOnly
-                      />
                     </div>
                   </div>
                 </div>
               )}
 
-              {/* Order Notes (Optional) */}
-              <div className="bg-white rounded-xl border border-gray-200 p-6">
-                <h2 className="text-xl font-bold text-gray-900 mb-4">Additional Information</h2>
-                <div>
-                  <label className="block text-sm font-medium text-gray-900 mb-2">
-                    Order Notes (Optional)
-                  </label>
+              {/* Order Notes - Optional */}
+              <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+                <div className="px-4 py-3 border-b border-gray-200 bg-gray-50/50">
+                  <div className="flex items-center gap-2">
+                    <FileText size={14} className="text-gray-600" />
+                    <h2 className="text-xs font-medium text-gray-700 uppercase tracking-wide">
+                      Additional Notes
+                    </h2>
+                    <span className="text-[9px] text-gray-400 ml-auto">Optional</span>
+                  </div>
+                </div>
+                
+                <div className="p-4">
                   <textarea
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-colors"
-                    rows={3}
-                    placeholder="Any special instructions or notes for your order..."
+                    name="notes"
+                    value={form.notes}
+                    onChange={handleFormChange}
+                    rows={2}
+                    className="w-full px-3 py-2.5 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-gray-900 focus:border-gray-900 transition-colors text-gray-900 placeholder:text-gray-400"
+                    placeholder="Any special instructions..."
                   />
                 </div>
               </div>
-            </form>
-          </div>
+            </div>
 
-          {/* Order Summary */}
-          <div className="lg:col-span-1">
-            <div className="bg-white rounded-xl border border-gray-200 p-6 sticky top-8">
-              <h2 className="text-xl font-bold text-gray-900 mb-6">Order Summary</h2>
-              
-              {/* Cart Items */}
-              <div className="mb-6 space-y-4 max-h-60 overflow-y-auto pr-2">
-                {cart.map((item) => (
-                  <div key={item.id} className="flex justify-between items-start">
-                    <div className="flex-1 min-w-0">
-                      <div className="font-medium text-gray-900 truncate">{item.title}</div>
-                      <div className="text-sm text-gray-600">
-                        {item.quantity} × {formatCurrency(item.price)}
-                        <span className="ml-2 capitalize text-xs">({item.format})</span>
+            {/* RIGHT COLUMN - Order Summary - Desktop only */}
+            <div className="hidden lg:block lg:col-span-1">
+              <div className="bg-white border border-gray-200 rounded-lg p-5 sticky top-28">
+                <h2 className="text-sm font-medium text-gray-900 mb-3 pb-2 border-b border-gray-200">
+                  Order Summary
+                </h2>
+                
+                {/* Cart items preview */}
+                <div className="space-y-2.5 mb-4 max-h-48 overflow-y-auto">
+                  {cart.map(item => (
+                    <div key={item.id} className="flex justify-between items-start text-xs">
+                      <div className="flex-1 pr-2">
+                        <div className="font-medium text-gray-900 line-clamp-1">
+                          {item.title}
+                        </div>
+                        <div className="text-gray-500 text-[10px] mt-0.5">
+                          {item.quantity} × {formatCurrency(item.price)} 
+                          <span className="ml-1 capitalize">({item.format})</span>
+                        </div>
                       </div>
-                    </div>
-                    <div className="text-right">
-                      <div className="font-medium text-gray-900">
+                      <div className="font-medium text-gray-900 whitespace-nowrap">
                         {formatCurrency(item.price * item.quantity)}
                       </div>
                     </div>
+                  ))}
+                </div>
+                
+                <div className="space-y-2 mb-4 text-xs">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Subtotal</span>
+                    <span className="font-medium text-gray-900">{formatCurrency(subtotal)}</span>
                   </div>
-                ))}
-              </div>
-              
-              <div className="space-y-4 border-t border-gray-200 pt-6">
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Subtotal</span>
-                  <span className="font-medium">{formatCurrency(subtotal)}</span>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Shipping</span>
+                    <span className="font-medium text-gray-900">
+                      {shipping === 0 ? 'Free' : formatCurrency(shipping)}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Tax (15%)</span>
+                    <span className="font-medium text-gray-900">{formatCurrency(tax)}</span>
+                  </div>
+                  <div className="border-t border-gray-200 pt-2 mt-2">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm font-medium text-gray-900">Total</span>
+                      <span className="text-lg font-light text-gray-900">{formatCurrency(total)}</span>
+                    </div>
+                  </div>
                 </div>
-                
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Shipping</span>
-                  <span className="font-medium">
-                    {shipping === 0 ? 'Free' : formatCurrency(shipping)}
-                  </span>
-                </div>
-                
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Tax (15% VAT)</span>
-                  <span className="font-medium">{formatCurrency(tax)}</span>
-                </div>
-                
-                <div className="border-t border-gray-200 pt-4 flex justify-between">
-                  <span className="text-lg font-bold text-gray-900">Total</span>
-                  <span className="text-2xl font-bold text-gray-900">{formatCurrency(total)}</span>
-                </div>
-              </div>
 
-              {/* Payment Notice */}
-              <div className="mt-6 p-4 bg-yellow-50 border border-yellow-100 rounded-lg">
-                <div className="flex items-start gap-2">
-                  <svg className="w-5 h-5 text-yellow-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  <p className="text-sm text-yellow-700">
-                    Note: This is a demo checkout. In production, this would connect to PayFast for payment processing.
-                  </p>
-                </div>
-              </div>
-
-              {/* Submit Button */}
-              <button
-                type="submit"
-                onClick={handleSubmit}
-                disabled={submitting}
-                className="w-full mt-6 py-4 bg-gray-900 text-white font-medium rounded-lg hover:bg-black transition-colors text-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-              >
-                {submitting ? (
-                  <>
-                    <svg className="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                    </svg>
-                    Processing Order...
-                  </>
-                ) : (
-                  'Place Order'
-                )}
-              </button>
-
-              {/* Back to Cart */}
-              <div className="mt-4 text-center">
-                <Link
-                  href="/cart"
-                  className="text-gray-600 hover:text-gray-900 hover:underline transition-colors text-sm"
+                {/* Desktop checkout button */}
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="w-full py-2.5 bg-black text-white text-sm font-medium rounded-lg hover:bg-gray-900 transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
                 >
-                  ← Back to cart
-                </Link>
+                  {submitting ? (
+                    <>
+                      <div className="w-4 h-4 border border-white/30 border-t-white rounded-full animate-spin" />
+                      <span>Processing...</span>
+                    </>
+                  ) : (
+                    <>
+                      <CreditCard size={16} />
+                      <span>Place Order</span>
+                    </>
+                  )}
+                </button>
               </div>
             </div>
           </div>
-        </div>
+        </form>
       </div>
     </div>
   )

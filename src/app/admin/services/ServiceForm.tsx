@@ -1,4 +1,4 @@
-// File: /src/app/admin/services/ServiceForm.tsx
+// /src/app/admin/services/ServiceForm.tsx
 'use client'
 
 import { useState, useEffect, FormEvent } from 'react'
@@ -161,7 +161,7 @@ export default function ServiceForm({ service, categories, onSubmit, onClose }: 
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
           {/* Service Name */}
           <div>
-            <label className="block text-sm font-medium text-gray-900 mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               Service Name *
             </label>
             <input
@@ -169,7 +169,7 @@ export default function ServiceForm({ service, categories, onSubmit, onClose }: 
               name="name"
               value={formData.name}
               onChange={handleChange}
-              className={`w-full px-4 py-3 rounded-lg border ${errors.name ? 'border-red-300' : 'border-gray-300'} focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-colors`}
+              className={`w-full px-4 py-3 rounded-lg border ${errors.name ? 'border-red-300' : 'border-gray-300'} focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-colors bg-white text-gray-900 placeholder:text-gray-500`}
               placeholder="e.g., Life Coaching Session"
             />
             {errors.name && <p className="mt-2 text-sm text-red-600">{errors.name}</p>}
@@ -177,7 +177,7 @@ export default function ServiceForm({ service, categories, onSubmit, onClose }: 
 
           {/* Description */}
           <div>
-            <label className="block text-sm font-medium text-gray-900 mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               Description *
             </label>
             <textarea
@@ -185,7 +185,7 @@ export default function ServiceForm({ service, categories, onSubmit, onClose }: 
               value={formData.description}
               onChange={handleChange}
               rows={3}
-              className={`w-full px-4 py-3 rounded-lg border ${errors.description ? 'border-red-300' : 'border-gray-300'} focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-colors`}
+              className={`w-full px-4 py-3 rounded-lg border ${errors.description ? 'border-red-300' : 'border-gray-300'} focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-colors bg-white text-gray-900 placeholder:text-gray-500`}
               placeholder="Describe what clients can expect from this service..."
             />
             {errors.description && <p className="mt-2 text-sm text-red-600">{errors.description}</p>}
@@ -194,14 +194,14 @@ export default function ServiceForm({ service, categories, onSubmit, onClose }: 
           {/* Category and Format */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-900 mb-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
                 Category *
               </label>
               <select
                 name="category"
                 value={formData.category}
                 onChange={handleChange}
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-colors"
+                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-colors bg-white text-gray-900"
               >
                 {categories.map((category) => (
                   <option key={category.value} value={category.value}>
@@ -212,14 +212,14 @@ export default function ServiceForm({ service, categories, onSubmit, onClose }: 
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-900 mb-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
                 Format *
               </label>
               <select
                 name="format"
                 value={formData.format}
                 onChange={handleChange}
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-colors"
+                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-colors bg-white text-gray-900"
               >
                 <option value="virtual">Virtual Only</option>
                 <option value="in-person">In-Person Only</option>
@@ -231,7 +231,7 @@ export default function ServiceForm({ service, categories, onSubmit, onClose }: 
           {/* Duration and Price */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-900 mb-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
                 Duration (minutes) *
               </label>
               <input
@@ -241,14 +241,14 @@ export default function ServiceForm({ service, categories, onSubmit, onClose }: 
                 onChange={handleChange}
                 min="15"
                 step="15"
-                className={`w-full px-4 py-3 rounded-lg border ${errors.duration ? 'border-red-300' : 'border-gray-300'} focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-colors`}
+                className={`w-full px-4 py-3 rounded-lg border ${errors.duration ? 'border-red-300' : 'border-gray-300'} focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-colors bg-white text-gray-900 placeholder:text-gray-500`}
                 placeholder="e.g., 60"
               />
               {errors.duration && <p className="mt-2 text-sm text-red-600">{errors.duration}</p>}
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-900 mb-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
                 Price (R) *
               </label>
               <div className="relative">
@@ -260,7 +260,7 @@ export default function ServiceForm({ service, categories, onSubmit, onClose }: 
                   onChange={handleChange}
                   min="0"
                   step="0.01"
-                  className={`w-full pl-10 pr-4 py-3 rounded-lg border ${errors.price ? 'border-red-300' : 'border-gray-300'} focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-colors`}
+                  className={`w-full pl-10 pr-4 py-3 rounded-lg border ${errors.price ? 'border-red-300' : 'border-gray-300'} focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-colors bg-white text-gray-900 placeholder:text-gray-500`}
                   placeholder="0.00"
                 />
               </div>
@@ -270,7 +270,7 @@ export default function ServiceForm({ service, categories, onSubmit, onClose }: 
 
           {/* Image URL */}
           <div>
-            <label className="block text-sm font-medium text-gray-900 mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               Image URL (optional)
             </label>
             <input
@@ -278,7 +278,7 @@ export default function ServiceForm({ service, categories, onSubmit, onClose }: 
               name="imageUrl"
               value={formData.imageUrl}
               onChange={handleChange}
-              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-colors"
+              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-colors bg-white text-gray-900 placeholder:text-gray-500"
               placeholder="https://example.com/image.jpg"
             />
           </div>
@@ -286,7 +286,7 @@ export default function ServiceForm({ service, categories, onSubmit, onClose }: 
           {/* Order and Status */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-900 mb-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
                 Display Order
               </label>
               <input
@@ -294,7 +294,7 @@ export default function ServiceForm({ service, categories, onSubmit, onClose }: 
                 name="order"
                 value={formData.order}
                 onChange={handleChange}
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-colors"
+                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-colors bg-white text-gray-900 placeholder:text-gray-500"
                 placeholder="0"
               />
             </div>
@@ -306,9 +306,9 @@ export default function ServiceForm({ service, categories, onSubmit, onClose }: 
                 name="isActive"
                 checked={formData.isActive}
                 onChange={handleChange}
-                className="w-5 h-5 rounded border-gray-300 text-gray-900 focus:ring-gray-900"
+                className="w-5 h-5 rounded border-gray-300 text-gray-900 focus:ring-gray-900 bg-white"
               />
-              <label htmlFor="isActive" className="text-sm font-medium text-gray-900">
+              <label htmlFor="isActive" className="text-sm font-medium text-gray-700">
                 Active
               </label>
             </div>
@@ -320,9 +320,9 @@ export default function ServiceForm({ service, categories, onSubmit, onClose }: 
                 name="isFeatured"
                 checked={formData.isFeatured}
                 onChange={handleChange}
-                className="w-5 h-5 rounded border-gray-300 text-gray-900 focus:ring-gray-900"
+                className="w-5 h-5 rounded border-gray-300 text-gray-900 focus:ring-gray-900 bg-white"
               />
-              <label htmlFor="isFeatured" className="text-sm font-medium text-gray-900">
+              <label htmlFor="isFeatured" className="text-sm font-medium text-gray-700">
                 Featured
               </label>
             </div>

@@ -1,52 +1,48 @@
 // File: /src/app/api/upload/route.ts
 import { NextRequest, NextResponse } from 'next/server'
-import { writeFile, mkdir } from 'fs/promises'
-import { join } from 'path'
-import { existsSync } from 'fs'
+import { uploadImage } from '@/lib/upload'
 
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData()
     const file = formData.get('file') as File
-    
-    if (!file) {
+    const type = formData.get('type') as string
+    const itemId = formData.get('itemId') as string
+
+    if (!file || !type || !itemId) {
       return NextResponse.json(
-        { error: 'No file provided' },
+        { error: 'Missing required fields' },
         { status: 400 }
       )
     }
 
-    const bytes = await file.arrayBuffer()
-    const buffer = Buffer.from(bytes)
-    
-    // Create uploads directory if it doesn't exist
-    const uploadsDir = join(process.cwd(), 'public', 'uploads')
-    if (!existsSync(uploadsDir)) {
-      await mkdir(uploadsDir, { recursive: true })
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      return NextResponse.json(
+        { error: 'File must be an image' },
+        { status: 400 }
+      )
     }
-    
-    // Generate unique filename
-    const timestamp = Date.now()
-    const originalName = file.name.replace(/[^a-zA-Z0-9.]/g, '-')
-    const filename = `${timestamp}-${originalName}`
-    const filepath = join(uploadsDir, filename)
-    
-    // Save file
-    await writeFile(filepath, buffer)
-    
-    // Return the URL path
-    const fileUrl = `/uploads/${filename}`
-    
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      return NextResponse.json(
+        { error: 'File too large (max 5MB)' },
+        { status: 400 }
+      )
+    }
+
+    const result = await uploadImage(file, type as any, itemId)
+
     return NextResponse.json({ 
       success: true, 
-      fileUrl,
-      filename 
+      url: result.url 
     })
-    
+
   } catch (error) {
-    console.error('Upload error:', error)
+    console.error('Upload API error:', error)
     return NextResponse.json(
-      { error: 'Failed to upload file' },
+      { error: 'Upload failed' },
       { status: 500 }
     )
   }

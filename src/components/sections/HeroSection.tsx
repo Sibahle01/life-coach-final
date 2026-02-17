@@ -232,7 +232,7 @@ export default function HeroSection({
                       className="h-[2px] bg-gradient-to-r from-white to-white/60"
                     />
                     <span className="text-white font-light tracking-[0.3em] text-xs uppercase">
-                      Since 2010
+                      Since 2012
                     </span>
                   </div>
 
@@ -248,7 +248,7 @@ export default function HeroSection({
                       </span>
                       <span className="block text-2xl lg:text-3xl xl:text-4xl font-light text-white/90 mt-2 tracking-wide italic" 
                         style={{ fontFamily: 'Georgia, serif' }}>
-                        & Peace
+                        & Success
                       </span>
                     </motion.h1>
 

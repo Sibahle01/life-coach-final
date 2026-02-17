@@ -2,7 +2,9 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { motion } from 'framer-motion'
 import Link from 'next/link'
+import { ShoppingCart, BookOpen, Download, Package, ArrowRight } from 'lucide-react'
 
 interface Book {
   id: string
@@ -88,112 +90,176 @@ export default function BooksPage() {
 
     const newCart = [...cart, cartItem]
     saveCart(newCart)
-    alert(`Added "${book.title}" (${format}) to cart`)
+    
+    // Show success message (non-intrusive)
+    const notification = document.createElement('div')
+    notification.className = 'fixed bottom-4 right-4 bg-black text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-fade-in-up'
+    notification.innerHTML = `✓ Added to cart`
+    document.body.appendChild(notification)
+    setTimeout(() => notification.remove(), 2000)
   }
 
   const formatCurrency = (amount: number) => {
-    return `R ${amount.toFixed(2)}`
+    return `R${amount.toFixed(2)}`
   }
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="w-12 h-12 border-2 border-gray-200 border-t-black rounded-full animate-spin"></div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-7xl mx-auto px-4">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Book Store</h1>
-          <p className="text-gray-600">Browse and purchase books from our collection</p>
-        </div>
+    <div className="min-h-screen bg-white">
+      {/* Black dots background - subtle */}
+      <div className="absolute inset-0 opacity-[0.015] pointer-events-none">
+        <div className="absolute inset-0" style={{
+          backgroundImage: 'radial-gradient(circle at 1px 1px, black 1px, transparent 0)',
+          backgroundSize: '40px 40px'
+        }} />
+      </div>
 
-        {/* Cart Indicator */}
-        <div className="flex justify-end mb-8">
-          <Link
-            href="/cart"
-            className="flex items-center gap-2 px-6 py-3 bg-gray-900 text-white rounded-lg hover:bg-black transition-colors"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-            </svg>
-            View Cart ({cart.length} items)
-          </Link>
-        </div>
+      {/* Content - with top padding to avoid navbar */}
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 md:pt-28 pb-16">
+        
+        {/* Header Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="mb-12 md:mb-16"
+        >
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+            <div>
+              {/* Breadcrumb */}
+              <div className="flex items-center gap-2 text-sm text-gray-500 mb-4 font-light">
+                <Link href="/" className="hover:text-gray-900 transition-colors">
+                  Home
+                </Link>
+                <span>/</span>
+                <span className="text-gray-900">Books</span>
+              </div>
+
+              {/* Title */}
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-light text-gray-900 mb-3 leading-tight">
+                Published Works
+              </h1>
+              <p className="text-base md:text-lg text-gray-600 font-light max-w-2xl">
+                Explore transformative teachings and insights through our published books
+              </p>
+            </div>
+
+            {/* Cart Button - Desktop */}
+            <Link
+              href="/cart"
+              className="hidden md:flex items-center gap-2 px-6 py-3 bg-gray-900 hover:bg-black text-white rounded-lg transition-all duration-300 active:scale-95 font-medium whitespace-nowrap"
+            >
+              <ShoppingCart size={20} />
+              <span>Cart ({cart.length})</span>
+            </Link>
+          </div>
+        </motion.div>
+
+        {/* Cart Button - Mobile Fixed */}
+        <Link
+          href="/cart"
+          className="md:hidden fixed bottom-4 right-4 z-40 flex items-center gap-2 px-5 py-3 bg-black text-white rounded-full shadow-lg active:scale-95 transition-transform font-medium"
+        >
+          <ShoppingCart size={18} />
+          <span>{cart.length}</span>
+        </Link>
 
         {/* Books Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
           {books
             .filter(book => book.isAvailable)
-            .map((book) => {
+            .map((book, index) => {
               const availableFormats = getAvailableFormats(book)
               const isOutOfStock = book.format.includes('physical') && book.stockQuantity <= 0
 
               return (
-                <div key={book.id} className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow">
+                <motion.div
+                  key={book.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  className="group bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-xl hover:border-gray-300 transition-all duration-300"
+                >
                   {/* Book Cover */}
-                  <div className="h-48 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+                  <div className="relative h-64 md:h-72 bg-gradient-to-br from-gray-100 to-gray-200 overflow-hidden">
                     {book.coverImageUrl ? (
-                      <img 
-                        src={book.coverImageUrl} 
-                        alt={book.title}
-                        className="w-full h-full object-cover"
-                      />
+                      <div className="relative h-full">
+                        <img 
+                          src={book.coverImageUrl} 
+                          alt={book.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        />
+                        {/* Dark overlay for better text readability */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                      </div>
                     ) : (
-                      <div className="text-center p-4">
-                        <svg className="w-12 h-12 text-gray-400 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253" />
-                        </svg>
-                        <p className="text-gray-500 mt-2">No cover image</p>
+                      <div className="flex flex-col items-center justify-center h-full p-6 text-center">
+                        <div className="w-16 h-16 bg-white/60 backdrop-blur-sm rounded-full flex items-center justify-center mb-3">
+                          <BookOpen size={32} className="text-gray-400" />
+                        </div>
+                        <p className="text-gray-500 text-sm font-light">No cover image</p>
+                      </div>
+                    )}
+
+                    {/* Out of Stock Badge */}
+                    {isOutOfStock && availableFormats.length > 0 && (
+                      <div className="absolute top-3 right-3 px-3 py-1 bg-white/95 backdrop-blur-sm border border-gray-200 rounded-full text-xs font-medium text-gray-700">
+                        Physical sold out
                       </div>
                     )}
                   </div>
 
                   {/* Book Info */}
-                  <div className="p-6">
-                    <h3 className="text-xl font-bold text-gray-900 mb-2 line-clamp-2">
+                  <div className="p-5 md:p-6">
+                    {/* Title & Author */}
+                    <h3 className="text-lg md:text-xl font-medium text-gray-900 mb-2 line-clamp-2 leading-snug">
                       {book.title}
                     </h3>
-                    <p className="text-gray-600 mb-4">by {book.author}</p>
+                    <p className="text-sm text-gray-600 mb-3 font-light">
+                      by {book.author}
+                    </p>
                     
-                    <div className="mb-4">
-                      <p className="text-sm text-gray-500 line-clamp-3">{book.description}</p>
-                    </div>
+                    {/* Description */}
+                    <p className="text-sm text-gray-600 font-light line-clamp-3 mb-4 leading-relaxed">
+                      {book.description}
+                    </p>
 
                     {/* Price */}
-                    <div className="mb-6">
-                      <div className="text-2xl font-bold text-gray-900">
+                    <div className="mb-5">
+                      <div className="text-2xl font-light text-gray-900">
                         {formatCurrency(book.price)}
                       </div>
-                      {isOutOfStock && availableFormats.length > 0 && (
-                        <div className="text-sm text-red-600 mt-1">
-                          Physical copies out of stock
-                        </div>
-                      )}
                     </div>
 
-                    {/* Format Selection - Only show if multiple formats available */}
+                    {/* Format Selection - Multiple formats */}
                     {availableFormats.length > 1 && (
                       <div className="mb-4">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Select Format:
+                        <label className="block text-xs uppercase tracking-wide text-gray-500 mb-2 font-medium">
+                          Choose Format:
                         </label>
-                        <div className="flex flex-wrap gap-2">
+                        <div className="grid grid-cols-2 gap-2">
                           {availableFormats.map((format) => (
                             <button
                               key={format}
                               onClick={() => setSelectedFormat({...selectedFormat, [book.id]: format})}
-                              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors capitalize ${
-                                selectedFormat[book.id] === format
-                                  ? 'bg-gray-900 text-white'
-                                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                              }`}
+                              className={`
+                                px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200
+                                flex items-center justify-center gap-2
+                                ${selectedFormat[book.id] === format
+                                  ? 'bg-black text-white'
+                                  : 'bg-gray-50 text-gray-700 hover:bg-gray-100 border border-gray-200'
+                                }
+                              `}
                             >
-                              {format}
+                              {format === 'ebook' ? <Download size={14} /> : <Package size={14} />}
+                              <span className="capitalize">{format}</span>
                             </button>
                           ))}
                         </div>
@@ -203,10 +269,12 @@ export default function BooksPage() {
                     {/* Single format - just display it */}
                     {availableFormats.length === 1 && (
                       <div className="mb-4">
-                        <div className="text-sm text-gray-600 mb-2">Format:</div>
-                        <div className="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium bg-blue-100 text-blue-800 capitalize">
-                          {availableFormats[0]}
-                          {availableFormats[0] === 'ebook' && ' (Instant Download)'}
+                        <div className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium bg-gray-50 text-gray-700 border border-gray-200">
+                          {availableFormats[0] === 'ebook' ? <Download size={14} /> : <Package size={14} />}
+                          <span className="capitalize">{availableFormats[0]}</span>
+                          {availableFormats[0] === 'ebook' && (
+                            <span className="text-xs text-gray-500">• Instant</span>
+                          )}
                         </div>
                       </div>
                     )}
@@ -215,38 +283,79 @@ export default function BooksPage() {
                     <button
                       onClick={() => addToCart(book)}
                       disabled={availableFormats.length === 0}
-                      className={`w-full py-3 rounded-lg font-medium transition-colors ${
-                        availableFormats.length === 0
-                          ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                          : 'bg-gray-900 text-white hover:bg-black'
-                      }`}
+                      className={`
+                        w-full py-3 rounded-lg font-medium transition-all duration-300
+                        flex items-center justify-center gap-2
+                        ${availableFormats.length === 0
+                          ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                          : 'bg-gray-900 text-white hover:bg-black active:scale-95 shadow-sm hover:shadow-md'
+                        }
+                      `}
                     >
-                      {availableFormats.length === 0
-                        ? 'Not Available'
-                        : availableFormats.length === 1
-                        ? `Add to Cart (${availableFormats[0]})`
-                        : selectedFormat[book.id]
-                        ? `Add to Cart (${selectedFormat[book.id]})`
-                        : 'Select Format to Add to Cart'}
+                      {availableFormats.length === 0 ? (
+                        'Not Available'
+                      ) : (
+                        <>
+                          <ShoppingCart size={18} />
+                          <span>Add to Cart</span>
+                          {availableFormats.length > 1 && !selectedFormat[book.id] && (
+                            <span className="text-xs opacity-70">• Select format</span>
+                          )}
+                        </>
+                      )}
                     </button>
                   </div>
-                </div>
+                </motion.div>
               )
             })}
         </div>
 
+        {/* Empty State */}
         {books.filter(book => book.isAvailable).length === 0 && (
-          <div className="text-center py-12">
-            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253" />
-              </svg>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-center py-16 md:py-24"
+          >
+            <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-6">
+              <BookOpen size={40} className="text-gray-300" />
             </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No books available</h3>
-            <p className="text-gray-600">Check back soon for new releases</p>
-          </div>
+            <h3 className="text-xl md:text-2xl font-light text-gray-900 mb-3">
+              No Books Available
+            </h3>
+            <p className="text-gray-600 font-light mb-6">
+              Check back soon for new releases
+            </p>
+            <Link
+              href="/"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-gray-900 hover:bg-black text-white rounded-lg transition-all duration-300 active:scale-95 font-medium"
+            >
+              <span>Return Home</span>
+              <ArrowRight size={18} />
+            </Link>
+          </motion.div>
         )}
+
+        {/* Bottom spacing for mobile cart button */}
+        <div className="h-20 md:hidden" />
       </div>
+
+      {/* Add animation styles */}
+      <style jsx global>{`
+        @keyframes fade-in-up {
+          from {
+            opacity: 0;
+            transform: translateY(10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        .animate-fade-in-up {
+          animation: fade-in-up 0.3s ease-out;
+        }
+      `}</style>
     </div>
   )
 }

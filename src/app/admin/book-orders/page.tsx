@@ -1,4 +1,4 @@
-// File: /src/app/admin/book-orders/page.tsx
+// /src/app/admin/book-orders/page.tsx
 'use client'
 
 import { useState, useEffect, FormEvent } from 'react'
@@ -482,7 +482,7 @@ export default function BookOrdersPage() {
                 placeholder="Search by customer name, email, order number, tracking..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-colors"
+                className="w-full pl-12 pr-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-colors bg-white text-gray-900 placeholder:text-gray-500"
               />
             </div>
           </div>
@@ -491,7 +491,7 @@ export default function BookOrdersPage() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-colors"
+              className="px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-colors bg-white text-gray-900"
             >
               <option value="all">All Status</option>
               <option value="PENDING">Pending</option>
@@ -546,7 +546,7 @@ export default function BookOrdersPage() {
                       <div className="space-y-1">
                         <div className="flex items-center gap-2">
                           <span className="font-medium text-gray-900">#{order.orderNumber}</span>
-                          <span className="text-sm text-gray-500">
+                          <span className="text-sm text-gray-600">
                             {new Date(order.createdAt).toLocaleDateString()}
                           </span>
                         </div>
@@ -556,7 +556,7 @@ export default function BookOrdersPage() {
                         {order.trackingNumber && (
                           <div className="text-sm">
                             <span className="text-gray-600">Tracking: </span>
-                            <span className="font-medium font-mono">{order.trackingNumber}</span>
+                            <span className="font-medium font-mono text-gray-900">{order.trackingNumber}</span>
                           </div>
                         )}
                       </div>
@@ -687,36 +687,36 @@ export default function BookOrdersPage() {
                 <h3 className="text-lg font-medium text-gray-900 mb-4">Customer Information</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-900 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
                       Customer Name
                     </label>
                     <input
                       type="text"
                       value={updateForm.customerName}
                       onChange={(e) => setUpdateForm({...updateForm, customerName: e.target.value})}
-                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-colors"
+                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-colors bg-white text-gray-900 placeholder:text-gray-500"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-900 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
                       Customer Email
                     </label>
                     <input
                       type="email"
                       value={updateForm.customerEmail}
                       onChange={(e) => setUpdateForm({...updateForm, customerEmail: e.target.value})}
-                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-colors"
+                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-colors bg-white text-gray-900 placeholder:text-gray-500"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-900 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
                       Customer Phone
                     </label>
                     <input
                       type="text"
                       value={updateForm.customerPhone}
                       onChange={(e) => setUpdateForm({...updateForm, customerPhone: e.target.value})}
-                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-colors"
+                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-colors bg-white text-gray-900 placeholder:text-gray-500"
                     />
                   </div>
                 </div>
@@ -727,47 +727,47 @@ export default function BookOrdersPage() {
                 <h3 className="text-lg font-medium text-gray-900 mb-4">Shipping Information</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-900 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
                       Shipping Address
                     </label>
                     <input
                       type="text"
                       value={updateForm.shippingAddress}
                       onChange={(e) => setUpdateForm({...updateForm, shippingAddress: e.target.value})}
-                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-colors"
+                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-colors bg-white text-gray-900 placeholder:text-gray-500"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-900 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
                       City
                     </label>
                     <input
                       type="text"
                       value={updateForm.shippingCity}
                       onChange={(e) => setUpdateForm({...updateForm, shippingCity: e.target.value})}
-                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-colors"
+                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-colors bg-white text-gray-900 placeholder:text-gray-500"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-900 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
                       Province
                     </label>
                     <input
                       type="text"
                       value={updateForm.shippingProvince}
                       onChange={(e) => setUpdateForm({...updateForm, shippingProvince: e.target.value})}
-                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-colors"
+                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-colors bg-white text-gray-900 placeholder:text-gray-500"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-900 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
                       Postal Code
                     </label>
                     <input
                       type="text"
                       value={updateForm.shippingPostalCode}
                       onChange={(e) => setUpdateForm({...updateForm, shippingPostalCode: e.target.value})}
-                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-colors"
+                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-colors bg-white text-gray-900 placeholder:text-gray-500"
                     />
                   </div>
                 </div>
@@ -844,13 +844,13 @@ export default function BookOrdersPage() {
                 <h3 className="text-lg font-medium text-gray-900 mb-4">Update Order Status</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-medium text-gray-900 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
                       Order Status
                     </label>
                     <select
                       value={updateForm.status}
                       onChange={(e) => setUpdateForm({...updateForm, status: e.target.value})}
-                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-colors"
+                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-colors bg-white text-gray-900"
                     >
                       <option value="PENDING">Pending</option>
                       <option value="CONFIRMED">Confirmed</option>
@@ -861,13 +861,13 @@ export default function BookOrdersPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-900 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
                       Payment Status
                     </label>
                     <select
                       value={updateForm.paymentStatus}
                       onChange={(e) => setUpdateForm({...updateForm, paymentStatus: e.target.value})}
-                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-colors"
+                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-colors bg-white text-gray-900"
                     >
                       <option value="PENDING">Pending</option>
                       <option value="PAID">Paid</option>
@@ -883,35 +883,35 @@ export default function BookOrdersPage() {
                     id="ebookDelivered"
                     checked={updateForm.ebookDelivered}
                     onChange={(e) => setUpdateForm({...updateForm, ebookDelivered: e.target.checked})}
-                    className="w-5 h-5 rounded border-gray-300 text-gray-900 focus:ring-gray-900"
+                    className="w-5 h-5 rounded border-gray-300 text-gray-900 focus:ring-gray-900 bg-white"
                   />
-                  <label htmlFor="ebookDelivered" className="text-sm font-medium text-gray-900">
+                  <label htmlFor="ebookDelivered" className="text-sm font-medium text-gray-700">
                     eBook Delivered
                   </label>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-900 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
                       Tracking Number
                     </label>
                     <input
                       type="text"
                       value={updateForm.trackingNumber}
                       onChange={(e) => setUpdateForm({...updateForm, trackingNumber: e.target.value})}
-                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-colors"
+                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-colors bg-white text-gray-900 placeholder:text-gray-500"
                       placeholder="Enter tracking number"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-900 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
                       Carrier
                     </label>
                     <select
                       value={updateForm.carrier}
                       onChange={(e) => setUpdateForm({...updateForm, carrier: e.target.value})}
-                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-colors"
+                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-colors bg-white text-gray-900"
                     >
                       <option value="">Select carrier</option>
                       <option value="post_office">South African Post Office</option>
@@ -928,39 +928,39 @@ export default function BookOrdersPage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-900 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
                       Estimated Delivery
                     </label>
                     <input
                       type="date"
                       value={updateForm.estimatedDelivery?.split('T')[0] || ''}
                       onChange={(e) => setUpdateForm({...updateForm, estimatedDelivery: e.target.value})}
-                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-colors"
+                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-colors bg-white text-gray-900"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-900 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
                       Delivered Date
                     </label>
                     <input
                       type="date"
                       value={updateForm.deliveredDate?.split('T')[0] || ''}
                       onChange={(e) => setUpdateForm({...updateForm, deliveredDate: e.target.value})}
-                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-colors"
+                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-colors bg-white text-gray-900"
                     />
                   </div>
                 </div>
 
                 <div className="mt-4">
-                  <label className="block text-sm font-medium text-gray-900 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
                     Notes
                   </label>
                   <textarea
                     value={updateForm.notes}
                     onChange={(e) => setUpdateForm({...updateForm, notes: e.target.value})}
                     rows={3}
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-colors"
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-colors bg-white text-gray-900 placeholder:text-gray-500"
                     placeholder="Add any notes about this order..."
                   />
                 </div>

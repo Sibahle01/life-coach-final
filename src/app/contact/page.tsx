@@ -1,468 +1,520 @@
-// src/app/contact/page.tsx
-'use client';
+// File: /src/app/(public)/contact/page.tsx
+'use client'
 
-import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { MapPin, Phone, Mail, Clock, MessageSquare, User, Send, ChevronDown, ChevronUp, Instagram, Facebook, Twitter } from 'lucide-react';
-import { KentePattern, AdinkraPattern, ZigzagPattern, MudclothPattern } from '@/components/patterns/AfricanPatterns';
-
-// FAQ data
-const faqItems = [
-  {
-    question: 'Do I need a reservation?',
-    answer: 'While walk-ins are welcome, we highly recommend making a reservation, especially on weekends and holidays. You can book online through our reservations page or call us directly.'
-  },
-  {
-    question: 'What is your cancellation policy?',
-    answer: 'We kindly request at least 4 hours notice for cancellations. For large groups (8+), please provide 24 hours notice. Late cancellations may incur a fee.'
-  },
-  {
-    question: 'Do you accommodate dietary restrictions?',
-    answer: 'Yes! We offer vegetarian, vegan, and gluten-free options. Please inform us of any allergies or dietary requirements when making your reservation or ordering.'
-  },
-  {
-    question: 'Is there parking available?',
-    answer: 'Yes, we have dedicated parking spaces for our guests at the Zenzele Building. Valet parking is available on weekends.'
-  },
-  {
-    question: 'Do you host private events?',
-    answer: 'Absolutely! We host private dinners, celebrations, and corporate events. Contact us for special event packages and availability.'
-  },
-  {
-    question: 'What is the dress code?',
-    answer: 'Smart casual attire is appreciated. While we welcome all guests, we recommend avoiding overly casual wear like sportswear or beachwear.'
-  }
-];
+import { useState } from 'react'
+import { motion } from 'framer-motion'
+import Link from 'next/link'
+import { 
+  Mail, 
+  Phone, 
+  MapPin, 
+  Calendar,
+  Clock,
+  MessageCircle,
+  Send,
+  ChevronRight,
+  Heart,
+  Users,
+  BookOpen,
+  Mic,
+  CheckCircle,
+  AlertCircle,
+  Coffee,
+  Globe
+} from 'lucide-react'
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     phone: '',
-    subject: '',
+    inquiryType: '',
     message: ''
-  });
-  
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
-  const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
+  })
+
+  const [submitted, setSubmitted] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value } = e.target
+    setFormData(prev => ({ ...prev, [name]: value }))
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
+    e.preventDefault()
+    setSubmitting(true)
     
     // Simulate form submission
     setTimeout(() => {
-      console.log('Form submitted:', formData);
-      setIsSubmitting(false);
-      setIsSubmitted(true);
-      setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
-    }, 1500);
-  };
+      setSubmitted(true)
+      setSubmitting(false)
+    }, 1500)
+  }
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  const inquiryTypes = [
+    { value: 'coaching', label: '1-on-1 Coaching' },
+    { value: 'speaking', label: 'Speaking Engagement' },
+    { value: 'workshop', label: 'Group Workshop' },
+    { value: 'media', label: 'Media & Interview' },
+    { value: 'general', label: 'General Inquiry' }
+  ]
 
-  const toggleFaq = (index: number) => {
-    setOpenFaqIndex(openFaqIndex === index ? null : index);
-  };
+  const contactMethods = [
+    {
+      icon: <Mail className="w-5 h-5" />,
+      title: "Email",
+      details: "sfiso.nkabinde07@gmail.com",
+      response: "Response within 24 hours",
+      action: "mailto:sfiso.nkabinde07@gmail.com"
+    },
+    {
+      icon: <Phone className="w-5 h-5" />,
+      title: "Phone",
+      details: "+27 (0) 71 482 9894",
+      response: "Weekdays 9am - 5pm",
+      action: "tel:+27714829894"
+    },
+    {
+      icon: <MapPin className="w-5 h-5" />,
+      title: "Office",
+      details: "Johannesburg, South Africa",
+      response: "By appointment only",
+      action: "#"
+    }
+  ]
 
-  return (
-    <div className="min-h-screen bg-cream">
-      {/* Hero Section */}
-      <div className="relative overflow-hidden bg-gradient-to-b from-forest-dark to-forest text-white pt-20 pb-12 sm:py-16 md:py-20">
-        <div className="absolute inset-0 opacity-10">
-          <KentePattern className="w-full h-full text-white" />
+  if (submitted) {
+    return (
+      <div className="min-h-screen bg-white">
+        <div className="absolute inset-0 opacity-[0.015] pointer-events-none">
+          <div className="absolute inset-0" style={{
+            backgroundImage: 'radial-gradient(circle at 1px 1px, black 1px, transparent 0)',
+            backgroundSize: '40px 40px'
+          }} />
         </div>
-        
-        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 text-center">
+
+        <div className="relative max-w-7xl mx-auto px-4 pt-20 pb-16">
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="relative z-10"
+            className="bg-white border border-gray-200 rounded-lg p-8 md:p-12 max-w-lg mx-auto text-center"
           >
-            <div className="flex justify-center gap-3 sm:gap-4 mb-4 sm:mb-6">
-              <ZigzagPattern className="w-16 h-4 sm:w-20 sm:h-5 md:w-24 md:h-6 text-gold/40" />
-              <AdinkraPattern className="w-16 h-4 sm:w-20 sm:h-5 md:w-24 md:h-6 text-gold/40" />
-              <ZigzagPattern className="w-16 h-4 sm:w-20 sm:h-5 md:w-24 md:h-6 text-gold/40" />
+            <div className="flex justify-center mb-6">
+              <div className="w-16 h-16 bg-black rounded-full flex items-center justify-center">
+                <CheckCircle size={28} className="text-white" />
+              </div>
             </div>
             
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6">
-              Connect With Us
+            <h1 className="text-2xl md:text-3xl font-light text-gray-900 mb-3">
+              Message Sent
             </h1>
             
-            <p className="text-base sm:text-lg md:text-xl text-cream/90 max-w-2xl mx-auto mb-6 sm:mb-8 font-serif leading-relaxed">
-              Have questions, feedback, or special requests? We'd love to hear from you.
+            <p className="text-gray-600 text-sm mb-6 font-light">
+              Thank you for reaching out, {formData.name.split(' ')[0] || 'friend'}. 
+              I'll personally read your message and get back to you within 24 hours.
             </p>
             
-            <div className="flex justify-center mt-6 sm:mt-8">
-              <AdinkraPattern className="w-32 h-2 sm:w-40 md:w-48 text-gold" />
+            <div className="bg-gray-50 border border-gray-200 rounded-lg p-5 mb-8 text-left">
+              <div className="flex items-start gap-3">
+                <Heart size={16} className="text-gray-600 flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-xs font-medium text-gray-900 mb-1">
+                    What happens next?
+                  </p>
+                  <ul className="text-xs text-gray-600 space-y-1.5">
+                    <li className="flex items-start gap-1.5">
+                      <span className="text-gray-400">1.</span>
+                      <span>I'll read your message personally</span>
+                    </li>
+                    <li className="flex items-start gap-1.5">
+                      <span className="text-gray-400">2.</span>
+                      <span>You'll receive an email response within 24h</span>
+                    </li>
+                    <li className="flex items-start gap-1.5">
+                      <span className="text-gray-400">3.</span>
+                      <span>If urgent, I'll call you directly</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <Link
+                href="/"
+                className="px-5 py-2.5 bg-black text-white text-sm rounded-lg hover:bg-gray-900 transition-colors"
+              >
+                Return Home
+              </Link>
+              <button
+                onClick={() => {
+                  setSubmitted(false)
+                  setFormData({
+                    name: '',
+                    email: '',
+                    phone: '',
+                    inquiryType: '',
+                    message: ''
+                  })
+                }}
+                className="px-5 py-2.5 bg-gray-100 text-gray-700 text-sm rounded-lg hover:bg-gray-200 transition-colors"
+              >
+                Send Another Message
+              </button>
             </div>
           </motion.div>
         </div>
       </div>
+    )
+  }
 
-      {/* Main Content */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12 sm:py-16 md:py-20">
-        <div className="grid lg:grid-cols-3 gap-8 sm:gap-12">
+  return (
+    <div className="min-h-screen bg-white">
+      {/* Subtle background pattern */}
+      <div className="absolute inset-0 opacity-[0.015] pointer-events-none">
+        <div className="absolute inset-0" style={{
+          backgroundImage: 'radial-gradient(circle at 1px 1px, black 1px, transparent 0)',
+          backgroundSize: '40px 40px'
+        }} />
+      </div>
+
+      <div className="relative max-w-7xl mx-auto px-4 pt-20 pb-16">
+        
+        {/* ===== HEADER ===== */}
+        <div className="mb-10">
+          <div className="flex items-center gap-1.5 text-xs text-gray-500 mb-3">
+            <Link href="/" className="hover:text-gray-900">Home</Link>
+            <span>/</span>
+            <span className="text-gray-900">Contact</span>
+          </div>
           
-          {/* Left Column - Contact Form */}
+          <div className="max-w-3xl">
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-light text-gray-900 mb-4 leading-tight">
+              Let's<span className="font-serif italic text-gray-700 mx-2">Connect</span>
+            </h1>
+            <p className="text-base md:text-lg text-gray-600 font-light max-w-2xl">
+              Whether you're seeking coaching, booking a speaking engagement, or simply 
+              want to say hello—I'd love to hear from you. Every message is read personally.
+            </p>
+          </div>
+        </div>
+
+        {/* ===== CONTACT METHODS ===== */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-12">
+          {contactMethods.map((method, index) => (
+            <motion.a
+              key={index}
+              href={method.action}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: index * 0.05 }}
+              className="bg-white border border-gray-200 rounded-xl p-5 hover:border-gray-300 hover:shadow-md transition-all group"
+            >
+              <div className="flex items-start gap-4">
+                <div className="w-10 h-10 bg-black/5 rounded-full flex items-center justify-center group-hover:bg-black/10 transition-colors">
+                  <div className="text-gray-700">
+                    {method.icon}
+                  </div>
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-sm font-medium text-gray-900 mb-1">
+                    {method.title}
+                  </h3>
+                  <p className="text-xs text-gray-900 mb-1 break-all">
+                    {method.details}
+                  </p>
+                  <p className="text-[10px] text-gray-500 flex items-center gap-1">
+                    <Clock size={10} />
+                    {method.response}
+                  </p>
+                </div>
+                <ChevronRight size={16} className="text-gray-400 group-hover:text-gray-600 transition-colors" />
+              </div>
+            </motion.a>
+          ))}
+        </div>
+
+        {/* ===== MAIN CONTACT SECTION ===== */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
+          
+          {/* LEFT: Form */}
           <div className="lg:col-span-2">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="bg-white rounded-2xl sm:rounded-3xl shadow-xl p-6 sm:p-8"
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="bg-white border border-gray-200 rounded-2xl p-6 md:p-8"
             >
-              <div className="mb-8">
-                <ZigzagPattern className="w-full h-2 text-gold mb-6" />
-                <h2 className="text-2xl sm:text-3xl font-bold text-forest mb-3">
-                  Send Us a Message
-                </h2>
-                <p className="text-charcoal-light">
-                  Fill out the form below and we'll get back to you within 24 hours.
-                </p>
+              <div className="flex items-center gap-2 mb-6">
+                <div className="h-[2px] w-6 bg-black" />
+                <span className="text-xs uppercase tracking-[0.2em] text-gray-600 font-light">
+                  Send a Message
+                </span>
               </div>
-              
-              {isSubmitted ? (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  className="text-center py-8 sm:py-12"
-                >
-                  <div className="w-16 h-16 bg-gold/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <Send className="w-8 h-8 text-gold" />
-                  </div>
-                  <h3 className="text-xl sm:text-2xl font-bold text-forest mb-3">
-                    Message Sent Successfully!
-                  </h3>
-                  <p className="text-charcoal-light mb-6 max-w-md mx-auto">
-                    Thank you for reaching out. We've received your message and will respond as soon as possible.
-                  </p>
-                  <button
-                    onClick={() => setIsSubmitted(false)}
-                    className="px-6 py-3 bg-forest hover:bg-forest-dark text-white font-bold rounded-full transition-colors"
-                  >
-                    Send Another Message
-                  </button>
-                </motion.div>
-              ) : (
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="grid sm:grid-cols-2 gap-6">
-                    <div>
-                      <label className="block text-sm font-bold text-forest mb-2">
-                        Your Name *
-                      </label>
-                      <div className="relative">
-                        <User className="absolute left-3 top-1/2 -translate-y-1/2 text-charcoal-light w-5 h-5" />
-                        <input
-                          type="text"
-                          name="name"
-                          required
-                          value={formData.name}
-                          onChange={handleChange}
-                          className="w-full pl-10 pr-4 py-3 border-2 border-cream-dark rounded-xl focus:border-gold focus:outline-none transition-colors"
-                          placeholder="John Doe"
-                        />
-                      </div>
-                    </div>
-                    
-                    <div>
-                      <label className="block text-sm font-bold text-forest mb-2">
-                        Phone Number
-                      </label>
-                      <div className="relative">
-                        <Phone className="absolute left-3 top-1/2 -translate-y-1/2 text-charcoal-light w-5 h-5" />
-                        <input
-                          type="tel"
-                          name="phone"
-                          value={formData.phone}
-                          onChange={handleChange}
-                          className="w-full pl-10 pr-4 py-3 border-2 border-cream-dark rounded-xl focus:border-gold focus:outline-none transition-colors"
-                          placeholder="+27 73 498 4451"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  
+
+              <form onSubmit={handleSubmit} className="space-y-5">
+                {/* Name */}
+                <div>
+                  <label className="block text-[10px] uppercase tracking-wide text-gray-500 mb-1.5 font-medium">
+                    Full Name <span className="text-gray-900">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-4 py-3 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-gray-900 focus:border-gray-900 transition-colors text-gray-900 placeholder:text-gray-400"
+                    placeholder="John Doe"
+                  />
+                </div>
+
+                {/* Email & Phone - Row */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-bold text-forest mb-2">
-                      Email Address *
+                    <label className="block text-[10px] uppercase tracking-wide text-gray-500 mb-1.5 font-medium">
+                      Email <span className="text-gray-900">*</span>
                     </label>
-                    <div className="relative">
-                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-charcoal-light w-5 h-5" />
-                      <input
-                        type="email"
-                        name="email"
-                        required
-                        value={formData.email}
-                        onChange={handleChange}
-                        className="w-full pl-10 pr-4 py-3 border-2 border-cream-dark rounded-xl focus:border-gold focus:outline-none transition-colors"
-                        placeholder="john@example.com"
-                      />
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-bold text-forest mb-2">
-                      Subject *
-                    </label>
-                    <select
-                      name="subject"
-                      required
-                      value={formData.subject}
+                    <input
+                      type="email"
+                      name="email"
+                      value={formData.email}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 border-2 border-cream-dark rounded-xl focus:border-gold focus:outline-none transition-colors"
-                    >
-                      <option value="">Select a subject</option>
-                      <option value="reservation">Reservation Inquiry</option>
-                      <option value="feedback">Feedback</option>
-                      <option value="event">Private Event</option>
-                      <option value="dietary">Dietary Requirements</option>
-                      <option value="other">Other</option>
-                    </select>
+                      required
+                      className="w-full px-4 py-3 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-gray-900 focus:border-gray-900 transition-colors text-gray-900 placeholder:text-gray-400"
+                      placeholder="john@example.com"
+                    />
                   </div>
-                  
                   <div>
-                    <label className="block text-sm font-bold text-forest mb-2">
-                      Your Message *
+                    <label className="block text-[10px] uppercase tracking-wide text-gray-500 mb-1.5 font-medium">
+                      Phone <span className="text-gray-300 font-normal">(Optional)</span>
                     </label>
-                    <div className="relative">
-                      <MessageSquare className="absolute left-3 top-3 text-charcoal-light w-5 h-5" />
-                      <textarea
-                        name="message"
-                        required
-                        value={formData.message}
-                        onChange={handleChange}
-                        rows={5}
-                        className="w-full pl-10 pr-4 py-3 border-2 border-cream-dark rounded-xl focus:border-gold focus:outline-none transition-colors resize-none"
-                        placeholder="Tell us how we can help you..."
-                      />
-                    </div>
+                    <input
+                      type="tel"
+                      name="phone"
+                      value={formData.phone}
+                      onChange={handleChange}
+                      className="w-full px-4 py-3 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-gray-900 focus:border-gray-900 transition-colors text-gray-900 placeholder:text-gray-400"
+                      placeholder="+27 82 123 4567"
+                    />
                   </div>
-                  
+                </div>
+
+                {/* Inquiry Type */}
+                <div>
+                  <label className="block text-[10px] uppercase tracking-wide text-gray-500 mb-1.5 font-medium">
+                    What are you reaching out about? <span className="text-gray-900">*</span>
+                  </label>
+                  <select
+                    name="inquiryType"
+                    value={formData.inquiryType}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-4 py-3 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-gray-900 focus:border-gray-900 transition-colors text-gray-900"
+                  >
+                    <option value="" disabled>Select an option</option>
+                    {inquiryTypes.map(type => (
+                      <option key={type.value} value={type.value}>{type.label}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Message */}
+                <div>
+                  <label className="block text-[10px] uppercase tracking-wide text-gray-500 mb-1.5 font-medium">
+                    Your Message <span className="text-gray-900">*</span>
+                  </label>
+                  <textarea
+                    name="message"
+                    value={formData.message}
+                    onChange={handleChange}
+                    required
+                    rows={5}
+                    className="w-full px-4 py-3 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-gray-900 focus:border-gray-900 transition-colors text-gray-900 placeholder:text-gray-400"
+                    placeholder="Tell me about your coaching needs, speaking request, or question..."
+                  />
+                </div>
+
+                {/* Submit Button */}
+                <div className="pt-4">
                   <button
                     type="submit"
-                    disabled={isSubmitting}
-                    className="w-full bg-gold hover:bg-gold-light text-forest font-bold py-4 rounded-full transition-all shadow-lg hover:shadow-gold/30 disabled:opacity-50 disabled:cursor-not-allowed"
+                    disabled={submitting}
+                    className="w-full md:w-auto px-8 py-3.5 bg-black text-white text-sm font-medium rounded-lg hover:bg-gray-900 active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    {isSubmitting ? 'Sending...' : 'Send Message'}
+                    {submitting ? (
+                      <>
+                        <div className="w-4 h-4 border border-white/30 border-t-white rounded-full animate-spin" />
+                        <span>Sending...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Send size={16} />
+                        <span>Send Message</span>
+                      </>
+                    )}
                   </button>
-                </form>
-              )}
-            </motion.div>
-            
-            {/* FAQ Section */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.2 }}
-              className="mt-8 sm:mt-12"
-            >
-              <div className="bg-white rounded-2xl sm:rounded-3xl shadow-xl p-6 sm:p-8">
-                <h2 className="text-2xl sm:text-3xl font-bold text-forest mb-6">
-                  Frequently Asked Questions
-                </h2>
-                
-                <div className="space-y-4">
-                  {faqItems.map((faq, index) => (
-                    <div key={index} className="border border-cream-dark rounded-xl overflow-hidden">
-                      <button
-                        onClick={() => toggleFaq(index)}
-                        className="w-full px-4 py-4 sm:px-6 sm:py-5 flex items-center justify-between hover:bg-cream-light transition-colors"
-                      >
-                        <span className="text-left font-semibold text-forest text-sm sm:text-base">
-                          {faq.question}
-                        </span>
-                        {openFaqIndex === index ? (
-                          <ChevronUp className="w-5 h-5 text-gold flex-shrink-0" />
-                        ) : (
-                          <ChevronDown className="w-5 h-5 text-gold flex-shrink-0" />
-                        )}
-                      </button>
-                      
-                      {openFaqIndex === index && (
-                        <motion.div
-                          initial={{ opacity: 0, height: 0 }}
-                          animate={{ opacity: 1, height: 'auto' }}
-                          exit={{ opacity: 0, height: 0 }}
-                          className="px-4 sm:px-6 pb-4 sm:pb-5"
-                        >
-                          <p className="text-charcoal-light text-sm sm:text-base leading-relaxed">
-                            {faq.answer}
-                          </p>
-                        </motion.div>
-                      )}
-                    </div>
-                  ))}
+                  <p className="text-[10px] text-gray-500 mt-3">
+                    I typically respond within 24 hours. For urgent matters, please call.
+                  </p>
                 </div>
-              </div>
+              </form>
             </motion.div>
           </div>
-          
-          {/* Right Column - Map & Quick Info */}
-          <div className="space-y-6 sm:space-y-8">
-            
-            {/* Map */}
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              className="bg-white rounded-2xl sm:rounded-3xl shadow-xl overflow-hidden"
-            >
-              <div className="h-48 sm:h-64 bg-gradient-to-br from-forest-dark via-forest to-gold/20 relative">
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="text-center text-white p-4">
-                    <div className="w-12 h-12 sm:w-16 sm:h-16 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center mx-auto mb-3">
-                      <MapPin className="w-6 h-6 sm:w-8 sm:h-8 text-gold" />
-                    </div>
-                    <h3 className="text-lg sm:text-xl font-bold mb-1">Our Location</h3>
-                    <p className="text-sm opacity-90">Newcastle, South Africa</p>
-                  </div>
-                </div>
-                
-                {/* Pattern overlay */}
-                <div className="absolute bottom-0 left-0 right-0">
-                  <MudclothPattern className="w-full h-3 text-white/10" />
-                </div>
-              </div>
-              
-              <div className="p-4 sm:p-6">
-                <h4 className="font-bold text-forest mb-3">How to Find Us</h4>
-                <div className="space-y-2 text-sm text-charcoal">
-                  <p className="flex items-start gap-2">
-                    <MapPin className="w-4 h-4 text-gold mt-0.5 flex-shrink-0" />
-                    <span>Zenzele Building, Hospital Road, Section 5, Madadeni, Newcastle</span>
-                  </p>
-                  <p className="text-xs text-charcoal-light mt-3">
-                    Free parking available • Wheelchair accessible • Public transport nearby
-                  </p>
-                </div>
-              </div>
-            </motion.div>
-            
-            {/* Quick Contact */}
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.1 }}
-              className="bg-forest text-white rounded-2xl sm:rounded-3xl shadow-xl p-6 sm:p-8"
-            >
-              <div className="mb-6">
-                <AdinkraPattern className="w-full h-2 text-gold/30" />
-              </div>
-              
-              <h3 className="text-xl sm:text-2xl font-bold mb-6">Quick Contact</h3>
-              
-              <div className="space-y-5">
-                <div>
-                  <div className="flex items-center gap-3 mb-2">
-                    <Phone className="w-5 h-5 text-gold" />
-                    <p className="text-sm text-cream/70">Phone</p>
-                  </div>
-                  <a href="tel:+27734984451" className="font-semibold hover:text-gold transition-colors block">
-                    +27 73 498 4451
-                  </a>
-                </div>
-                
-                <div>
-                  <div className="flex items-center gap-3 mb-2">
-                    <Mail className="w-5 h-5 text-gold" />
-                    <p className="text-sm text-cream/70">Email</p>
-                  </div>
-                  <a href="mailto:kkhuzwayo@ymail.com" className="font-semibold hover:text-gold transition-colors block text-sm">
-                    kkhuzwayo@ymail.com
-                  </a>
-                </div>
-                
-                <div>
-                  <div className="flex items-center gap-3 mb-2">
-                    <Clock className="w-5 h-5 text-gold" />
-                    <p className="text-sm text-cream/70">Hours</p>
-                  </div>
-                  <div className="text-sm">
-                    <p className="font-semibold">Mon-Thu: 4PM-11PM</p>
-                    <p className="font-semibold">Fri-Sat: 4PM-12AM</p>
-                    <p className="font-semibold">Sun: 4PM-10PM</p>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-            
-            {/* Social Media */}
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.2 }}
-              className="bg-gradient-to-r from-forest/10 to-gold/10 rounded-2xl sm:rounded-3xl shadow-xl p-6 sm:p-8"
-            >
-              <h3 className="text-xl sm:text-2xl font-bold text-forest mb-6">Follow Our Journey</h3>
-              
-              <div className="grid grid-cols-3 gap-3 sm:gap-4">
-                <a
-                  href="#"
-                  className="bg-white hover:bg-forest group rounded-xl p-4 text-center shadow-sm hover:shadow-md transition-all"
-                >
-                  <Instagram className="w-6 h-6 text-forest group-hover:text-white mx-auto mb-2" />
-                  <span className="text-xs font-medium text-forest group-hover:text-white">
-                    Instagram
-                  </span>
-                </a>
-                
-                <a
-                  href="#"
-                  className="bg-white hover:bg-forest group rounded-xl p-4 text-center shadow-sm hover:shadow-md transition-all"
-                >
-                  <Facebook className="w-6 h-6 text-forest group-hover:text-white mx-auto mb-2" />
-                  <span className="text-xs font-medium text-forest group-hover:text-white">
-                    Facebook
-                  </span>
-                </a>
-                
-                <a
-                  href="#"
-                  className="bg-white hover:bg-forest group rounded-xl p-4 text-center shadow-sm hover:shadow-md transition-all"
-                >
-                  <Twitter className="w-6 h-6 text-forest group-hover:text-white mx-auto mb-2" />
-                  <span className="text-xs font-medium text-forest group-hover:text-white">
-                    Twitter
-                  </span>
-                </a>
-              </div>
-              
-              <p className="text-sm text-charcoal-light mt-6">
-                Follow us for updates, special offers, and behind-the-scenes glimpses of Ubuntu.
-              </p>
-            </motion.div>
-            
-            {/* Emergency Contact */}
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.3 }}
-              className="bg-gradient-to-r from-gold/20 to-forest/20 rounded-2xl sm:rounded-3xl p-6 sm:p-8"
-            >
-              <h3 className="text-lg sm:text-xl font-bold text-forest mb-3">Need Immediate Assistance?</h3>
-              <p className="text-sm text-charcoal-light mb-4">
-                For urgent matters regarding existing reservations, please call us directly.
-              </p>
-              <a
-                href="tel:+27734984451"
-                className="inline-flex items-center gap-2 bg-forest hover:bg-forest-dark text-white font-bold px-4 py-3 rounded-full transition-colors text-sm"
+
+          {/* RIGHT: Availability & Personal Note */}
+          <div className="lg:col-span-1">
+            <div className="space-y-5">
+              {/* Availability Card */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.1 }}
+                className="bg-white border border-gray-200 rounded-2xl p-6"
               >
-                <Phone className="w-4 h-4" />
-                Call Now: +27 73 498 4451
-              </a>
-            </motion.div>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 bg-black/5 rounded-full flex items-center justify-center">
+                    <Calendar size={18} className="text-gray-700" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-medium text-gray-900">Coaching Availability</h3>
+                    <p className="text-[10px] text-gray-500">Limited slots available</p>
+                  </div>
+                </div>
+
+                <div className="space-y-3 mb-5">
+                  <div className="flex justify-between items-center text-xs">
+                    <span className="text-gray-600">Monday - Thursday</span>
+                    <span className="font-medium text-gray-900">9am - 5pm</span>
+                  </div>
+                  <div className="flex justify-between items-center text-xs">
+                    <span className="text-gray-600">Friday</span>
+                    <span className="font-medium text-gray-900">9am - 2pm</span>
+                  </div>
+                  <div className="flex justify-between items-center text-xs">
+                    <span className="text-gray-600">Saturday - Sunday</span>
+                    <span className="font-medium text-gray-900">Closed</span>
+                  </div>
+                </div>
+
+                <div className="pt-3 border-t border-gray-200">
+                  <div className="flex items-start gap-2">
+                    <Clock size={12} className="text-gray-400 mt-0.5" />
+                    <p className="text-[10px] text-gray-500 leading-relaxed">
+                      All times are SAST (UTC+2). Virtual sessions available worldwide.
+                    </p>
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Personal Note Card */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                className="bg-black rounded-2xl p-6 text-white"
+              >
+                <div className="flex items-center gap-2 mb-4">
+                  <Heart size={16} className="text-white/80" />
+                  <span className="text-xs uppercase tracking-[0.2em] text-white/60 font-light">
+                    A Personal Note
+                  </span>
+                </div>
+
+                <p className="text-sm font-light text-white/90 leading-relaxed mb-4">
+                  "I personally read every message that comes through this site. 
+                  Whether you're seeking guidance or just exploring, I'm grateful 
+                  you're here and will respond as soon as I can."
+                </p>
+
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center">
+                    <Coffee size={14} className="text-white/80" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-medium text-white">
+                      Pastor Sifiso Nkabinde
+                    </p>
+                    <p className="text-[9px] text-white/50">
+                      Response within 24 hours
+                    </p>
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Quick Links */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.3 }}
+                className="bg-white border border-gray-200 rounded-2xl p-5"
+              >
+                <h3 className="text-xs font-medium text-gray-900 mb-3 uppercase tracking-wide">
+                  Quick Links
+                </h3>
+                <div className="space-y-2">
+                  <Link 
+                    href="/books"
+                    className="flex items-center justify-between p-2 hover:bg-gray-50 rounded-lg transition-colors"
+                  >
+                    <div className="flex items-center gap-2">
+                      <BookOpen size={14} className="text-gray-500" />
+                      <span className="text-xs text-gray-700">Browse Books</span>
+                    </div>
+                    <ChevronRight size={14} className="text-gray-400" />
+                  </Link>
+                  <Link 
+                    href="/events"
+                    className="flex items-center justify-between p-2 hover:bg-gray-50 rounded-lg transition-colors"
+                  >
+                    <div className="flex items-center gap-2">
+                      <Users size={14} className="text-gray-500" />
+                      <span className="text-xs text-gray-700">Upcoming Events</span>
+                    </div>
+                    <ChevronRight size={14} className="text-gray-400" />
+                  </Link>
+                  <Link 
+                    href="/speaking"
+                    className="flex items-center justify-between p-2 hover:bg-gray-50 rounded-lg transition-colors"
+                  >
+                    <div className="flex items-center gap-2">
+                      <Mic size={14} className="text-gray-500" />
+                      <span className="text-xs text-gray-700">Speaking Engagements</span>
+                    </div>
+                    <ChevronRight size={14} className="text-gray-400" />
+                  </Link>
+                </div>
+              </motion.div>
+            </div>
           </div>
         </div>
+
+        {/* ===== OFFICE LOCATION ===== */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="mt-16 pt-8 border-t border-gray-200"
+        >
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-black/5 rounded-full flex items-center justify-center">
+                <Globe size={18} className="text-gray-700" />
+              </div>
+              <div>
+                <p className="text-xs text-gray-500 font-light">Serving clients</p>
+                <p className="text-sm font-medium text-gray-900">Worldwide • Virtual & In-Person</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 text-xs text-gray-600">
+              <MapPin size={14} />
+              <span>Based in Johannesburg, South Africa</span>
+            </div>
+          </div>
+        </motion.div>
+
       </div>
     </div>
-  );
+  )
 }

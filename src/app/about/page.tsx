@@ -1,311 +1,408 @@
-// src/app/about/page.tsx
-'use client';
+// File: /src/app/(public)/about/page.tsx
+'use client'
 
-import { motion } from 'framer-motion';
-import { Users, Heart, Leaf, Trophy, Star, MapPin, Globe, Award, ChefHat } from 'lucide-react';
-import { KentePattern, AdinkraPattern, KubaPattern, MudclothPattern, ZigzagPattern, DiamondPattern } from '@/components/patterns/AfricanPatterns';
-
-// Team data - fictional but authentic
-const teamMembers = [
-  {
-    name: 'Khethiwe Khuzwayo',
-    role: 'Founder & Head Chef',
-    bio: 'Born in KwaZulu-Natal with 15 years of culinary expertise. Passionate about modernizing traditional African recipes.',
-    expertise: ['Zulu Cuisine', 'African Fusion', 'Sustainable Cooking'],
-    years: 15
-  },
-  {
-    name: 'Amahle Ndlovu',
-    role: 'Restaurant Manager',
-    bio: 'Hospitality expert ensuring every guest experiences genuine Ubuntu hospitality.',
-    expertise: ['Guest Experience', 'Wine Pairing', 'Events'],
-    years: 8
-  },
-  {
-    name: 'Sipho Dlamini',
-    role: 'Master Chef',
-    bio: 'Specializes in contemporary dishes that honor African heritage with modern techniques.',
-    expertise: ['Contemporary African', 'Plant-Based', 'Spice Blending'],
-    years: 12
-  },
-  {
-    name: 'Thandi Mbeki',
-    role: 'Cultural Curator',
-    bio: 'Researches cultural elements to create authentic African ambiance and storytelling.',
-    expertise: ['African Art', 'Storytelling', 'Traditional Music'],
-    years: 10
-  }
-];
-
-// Values with African proverbs
-const values = [
-  {
-    icon: <Users className="w-5 h-5 sm:w-6 sm:h-6" />,
-    title: 'Ubuntu',
-    description: '"Umuntu ngumuntu ngabantu" - We are because of others.',
-    color: 'bg-forest/10 text-forest'
-  },
-  {
-    icon: <Leaf className="w-5 h-5 sm:w-6 sm:h-6" />,
-    title: 'Sustainability',
-    description: 'Source locally, support farmers, honor the earth.',
-    color: 'bg-gold/10 text-gold-dark'
-  },
-  {
-    icon: <Heart className="w-5 h-5 sm:w-6 sm:h-6" />,
-    title: 'Heritage',
-    description: 'Preserving traditions while innovating.',
-    color: 'bg-forest-dark/10 text-forest-dark'
-  },
-  {
-    icon: <Globe className="w-5 h-5 sm:w-6 sm:h-6" />,
-    title: 'Connection',
-    description: 'Bridging cultures through food.',
-    color: 'bg-gold/20 text-gold'
-  }
-];
+import { motion } from 'framer-motion'
+import Link from 'next/link'
+import { 
+  Heart, 
+  BookOpen, 
+  Users, 
+  Mic, 
+  Calendar,
+  MapPin,
+  Award,
+  Target,
+  ChevronRight,
+  Quote,
+  Sparkles,
+  Clock,
+  Globe,
+  Coffee
+} from 'lucide-react'
 
 export default function AboutPage() {
+  const milestones = [
+    { year: 2008, title: "Ordained Minister", description: "Called to serve and lead" },
+    { year: 2010, title: "Began Coaching", description: "First one-on-one sessions" },
+    { year: 2015, title: "Published First Book", description: "Circle of Seven" },
+    { year: 2018, title: "International Speaking", description: "Africa, Europe, USA" },
+    { year: 2021, title: "Online Academy", description: "Digital courses launched" },
+    { year: 2024, title: "15,000+ Lives", description: "Global impact milestone" }
+  ]
+
+  const values = [
+    {
+      icon: <Heart className="w-5 h-5" />,
+      title: "Faith-Centered",
+      description: "Every teaching rooted in biblical truth and practical application"
+    },
+    {
+      icon: <Target className="w-5 h-5" />,
+      title: "Purpose-Driven",
+      description: "Guiding individuals to discover and fulfill their divine calling"
+    },
+    {
+      icon: <Users className="w-5 h-5" />,
+      title: "Relational",
+      description: "Building authentic connections that foster lasting transformation"
+    },
+    {
+      icon: <Award className="w-5 h-5" />,
+      title: "Excellence",
+      description: "Committed to the highest standard in coaching and content"
+    }
+  ]
+
+  const stats = [
+    { value: "16", label: "Years", suffix: "+" },
+    { value: "3,500", label: "Lives Coached", suffix: "+" },
+    { value: "120", label: "Events", suffix: "+" },
+    { value: "5", label: "Books", suffix: "" },
+    { value: "15", label: "Countries", suffix: "" },
+    { value: "2,500", label: "Coaching Hours", suffix: "+" }
+  ]
+
   return (
-    <div className="min-h-screen bg-cream">
-      {/* Hero Section starts immediately under navbar */}
-      <div className="relative overflow-hidden bg-gradient-to-b from-forest-dark to-forest text-white pt-20 pb-12 sm:py-16 md:py-20">
-        <div className="absolute inset-0 opacity-10">
-          <KentePattern className="w-full h-full text-white" />
-        </div>
-        
-        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="relative z-10"
-          >
-            <div className="flex justify-center gap-3 sm:gap-4 mb-4 sm:mb-6">
-              <MudclothPattern className="w-16 h-4 sm:w-20 sm:h-5 md:w-24 md:h-6 text-gold/40" />
-              <ZigzagPattern className="w-16 h-4 sm:w-20 sm:h-5 md:w-24 md:h-6 text-gold/40" />
-              <MudclothPattern className="w-16 h-4 sm:w-20 sm:h-5 md:w-24 md:h-6 text-gold/40" />
-            </div>
-            
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 px-2">
-              Our Story of <span className="text-gold">Ubuntu</span>
-            </h1>
-            
-            <p className="text-base sm:text-lg md:text-xl text-cream/90 max-w-2xl mx-auto mb-6 sm:mb-8 px-4 font-serif leading-relaxed">
-              Where every meal celebrates heritage, community, and authentic African flavors
-            </p>
-            
-            <div className="flex justify-center mt-6 sm:mt-8">
-              <ZigzagPattern className="w-32 h-2 sm:w-40 md:w-48 text-gold" />
-            </div>
-          </motion.div>
-        </div>
+    <div className="min-h-screen bg-white">
+      {/* Subtle background pattern */}
+      <div className="absolute inset-0 opacity-[0.015] pointer-events-none">
+        <div className="absolute inset-0" style={{
+          backgroundImage: 'radial-gradient(circle at 1px 1px, black 1px, transparent 0)',
+          backgroundSize: '40px 40px'
+        }} />
       </div>
 
-      {/* Main Content */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12 sm:py-16 md:py-20">
+      <div className="relative max-w-7xl mx-auto px-4 pt-20 pb-16">
         
-        {/* Our Story Section - Stack on mobile */}
-        <section className="mb-12 sm:mb-16 md:mb-20">
-          <div className="flex flex-col lg:grid lg:grid-cols-2 gap-8 sm:gap-10 md:gap-12 items-center">
+        {/* ===== HERO SECTION ===== */}
+        <div className="mb-16 md:mb-24">
+          <div className="flex items-center gap-1.5 text-xs text-gray-500 mb-4">
+            <Link href="/" className="hover:text-gray-900">Home</Link>
+            <span>/</span>
+            <span className="text-gray-900">About</span>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+            {/* Left: Content */}
             <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
-              className="w-full order-2 lg:order-1"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6 }}
             >
-              <div className="mb-6 sm:mb-8">
-                <KubaPattern className="w-full h-2 sm:h-2.5 text-gold mb-4 sm:mb-6" />
-                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-forest mb-4 sm:mb-6">
-                  From Newcastle to Your Table
-                </h2>
+              <div className="flex items-center gap-2 mb-4">
+                <div className="h-[2px] w-8 bg-black" />
+                <span className="text-xs uppercase tracking-[0.2em] text-gray-600 font-light">
+                  My Story
+                </span>
               </div>
               
-              <div className="space-y-4 text-base sm:text-lg text-charcoal">
-                <p className="leading-relaxed">
-                  Ubuntu Garden Lounge was born in 2018 from a vision to create a sanctuary 
-                  where African culinary heritage could be celebrated and shared.
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-light text-gray-900 mb-6 leading-tight">
+                Sifiso<span className="font-serif italic text-gray-700 mx-2">Nkabinde</span>
+              </h1>
+              
+              <div className="space-y-5 text-gray-700 font-light leading-relaxed">
+                <p className="text-base md:text-lg">
+                  For <span className="font-medium text-gray-900">16 years</span>, I've walked alongside individuals, 
+                  couples, and leaders, helping them discover the intersection between 
+                  their faith and their life's purpose.
                 </p>
-                
-                <p className="leading-relaxed">
-                  Founded by Chef Khethiwe Khuzwayo in Newcastle, our restaurant honors the 
-                  rich culinary traditions of South Africa. The name "Ubuntu" reflects our 
-                  core philosophy: <span className="italic text-forest font-semibold">"I am because we are."</span>
+                <p className="text-base md:text-lg">
+                  My journey began not in a boardroom, but in the quiet moments of 
+                  pastoral ministry—counselling sessions, late-night calls, and the 
+                  privilege of witnessing God transform brokenness into beauty. It was 
+                  there I realized that <span className="font-medium text-gray-900">spiritual clarity</span> and 
+                  <span className="font-medium text-gray-900">practical direction</span> must go hand in hand.
                 </p>
-                
-                <p className="leading-relaxed">
-                  From a small family kitchen to a culinary destination, we blend ancestral 
-                  recipes with contemporary techniques in the heart of Madadeni.
+                <p className="text-base md:text-lg">
+                  Today, through coaching, books, and events, I equip individuals to 
+                  move from where they are to where God is calling them to be—with 
+                  clarity, confidence, and conviction.
                 </p>
+              </div>
+
+              <div className="flex flex-wrap gap-4 mt-8">
+                <Link
+                  href="/contact"
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-black text-white text-sm rounded-lg hover:bg-gray-900 transition-all active:scale-95"
+                >
+                  <span>Work With Me</span>
+                  <ChevronRight size={16} />
+                </Link>
+                <Link
+                  href="/books"
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-white text-gray-900 text-sm border border-gray-300 rounded-lg hover:border-gray-900 hover:bg-gray-50 transition-all active:scale-95"
+                >
+                  <BookOpen size={16} />
+                  <span>Browse Books</span>
+                </Link>
+              </div>
+            </motion.div>
+
+            {/* Right: Image/Quote */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="relative"
+            >
+              <div className="aspect-[4/5] bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl overflow-hidden border border-gray-200 shadow-xl">
+                {/* Replace with actual image when available */}
+                <div className="w-full h-full flex flex-col items-center justify-center p-8 text-center">
+                  <div className="w-20 h-20 bg-black/5 rounded-full flex items-center justify-center mb-6">
+                    <Quote size={32} className="text-gray-700 rotate-180" />
+                  </div>
+                  <blockquote className="text-xl md:text-2xl font-light text-gray-900 mb-6 leading-relaxed">
+                    "Your calling is not just about what you do—it's about who you become."
+                  </blockquote>
+                  <div className="w-12 h-[2px] bg-black/30 mb-4" />
+                  <p className="text-sm text-gray-600 font-medium">
+                    — Pastor Sifiso Nkabinde
+                  </p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    16 Years of Ministry
+                  </p>
+                </div>
               </div>
               
-              {/* Quote Card */}
-              <div className="mt-8 sm:mt-10 p-6 sm:p-8 bg-gradient-to-r from-forest/5 to-gold/5 rounded-2xl sm:rounded-3xl border-l-4 border-gold">
-                <p className="text-lg sm:text-xl italic text-forest-dark mb-4">
-                  "Food is memory served on a plate. Every spice carries history, every flavor tells 
-                  a story of our ancestors."
-                </p>
-                <p className="font-bold text-gold flex items-center gap-2">
-                  <ChefHat className="w-4 h-4 sm:w-5 sm:h-5" />
-                  Khethiwe Khuzwayo, Founder
-                </p>
-              </div>
-            </motion.div>
-            
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
-              className="w-full order-1 lg:order-2"
-            >
-              {/* Location Card - Mobile Optimized */}
-              <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-xl aspect-square sm:aspect-[4/3] md:aspect-square">
-                <div className="absolute inset-0 bg-gradient-to-br from-forest-dark via-forest to-gold/20" />
-                
-                <div className="absolute inset-0 flex items-center justify-center p-4 sm:p-6">
-                  <div className="text-center text-white max-w-sm">
-                    <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6">
-                      <MapPin className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 text-gold" />
-                    </div>
-                    <h3 className="text-xl sm:text-2xl md:text-3xl font-bold mb-2 sm:mb-3">Our Home</h3>
-                    <p className="text-sm sm:text-base md:text-lg mb-3 sm:mb-4">Madadeni, Newcastle</p>
-                    <div className="inline-flex items-center gap-2 bg-black/30 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm">
-                      <span className="text-gold">📍</span>
-                      <span>Section 5, Hospital Road</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              {/* Decorative elements */}
+              <div className="absolute -bottom-4 -right-4 w-24 h-24 bg-black/5 rounded-full -z-10" />
+              <div className="absolute -top-4 -left-4 w-16 h-16 bg-black/5 rounded-full -z-10" />
             </motion.div>
           </div>
-        </section>
+        </div>
 
-        {/* Values Section - Mobile Grid */}
-        <section className="mb-12 sm:mb-16 md:mb-20">
-          <div className="text-center mb-8 sm:mb-12">
-            <div className="flex justify-center mb-3 sm:mb-4">
-              <ZigzagPattern className="w-24 h-1.5 sm:w-32 sm:h-2 text-gold" />
-            </div>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-forest mb-3 sm:mb-4">
-              Our Guiding Principles
-            </h2>
-            <p className="text-charcoal-light text-sm sm:text-base md:text-lg max-w-2xl mx-auto px-2">
-              Values that shape every aspect of Ubuntu
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8">
-            {values.map((value, index) => (
-              <motion.div
-                key={value.title}
-                initial={{ opacity: 0, scale: 0.95 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{ delay: index * 0.1 }}
-                className={`${value.color} p-4 sm:p-6 rounded-2xl sm:rounded-3xl shadow-md hover:shadow-lg transition-shadow duration-300`}
-              >
-                <div className="flex items-center gap-3 sm:gap-4 mb-3 sm:mb-4">
-                  <div className="p-2 sm:p-3 rounded-xl bg-white/50">
-                    {value.icon}
+        {/* ===== STATS SECTION ===== */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="mb-20 md:mb-28"
+        >
+          <div className="bg-black rounded-2xl p-8 md:p-12">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 md:gap-8">
+              {stats.map((stat, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4, delay: index * 0.05 }}
+                  className="text-center"
+                >
+                  <div className="text-2xl md:text-3xl lg:text-4xl font-light text-white mb-1">
+                    {stat.value}{stat.suffix}
                   </div>
-                  <h3 className="text-base sm:text-lg font-bold">{value.title}</h3>
-                </div>
-                <p className="text-xs sm:text-sm leading-relaxed">{value.description}</p>
-              </motion.div>
-            ))}
-          </div>
-        </section>
-
-        {/* Stats Section - Mobile Grid */}
-        <section className="mb-12 sm:mb-16 md:mb-20">
-          <div className="bg-gradient-to-r from-forest/10 to-gold/10 rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-10">
-            <div className="text-center mb-8 sm:mb-10">
-              <div className="inline-flex items-center justify-center gap-2 sm:gap-3 mb-3 sm:mb-4">
-                <Award className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-gold" />
-                <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-forest">Our Journey</h3>
-                <Award className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-gold" />
-              </div>
-              <p className="text-charcoal-light text-sm sm:text-base md:text-lg max-w-2xl mx-auto">
-                Numbers that reflect our commitment to excellence
-              </p>
-            </div>
-            
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6">
-              {[
-                { value: '100%', label: 'Local Ingredients', desc: 'Within 100km' },
-                { value: '50+', label: 'Recipes', desc: 'Traditional & Modern' },
-                { value: '15', label: 'Techniques', desc: 'Handcrafted Methods' },
-                { value: '25+', label: 'Partners', desc: 'Farmers & Artisans' }
-              ].map((stat, index) => (
-                <div key={stat.label} className="text-center bg-white/80 backdrop-blur-sm rounded-xl p-4 sm:p-6 shadow-sm">
-                  <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-forest mb-1 sm:mb-2">{stat.value}</div>
-                  <div className="text-xs sm:text-sm font-bold text-gold-dark mb-1">{stat.label}</div>
-                  <div className="text-xs text-charcoal-light">{stat.desc}</div>
-                </div>
+                  <div className="text-[10px] md:text-xs text-white/60 uppercase tracking-[0.2em] font-light">
+                    {stat.label}
+                  </div>
+                </motion.div>
               ))}
             </div>
           </div>
-        </section>
+        </motion.div>
 
-        {/* Team Section - Final Section */}
-        <section>
-          <div className="text-center mb-8 sm:mb-12">
-            <div className="flex justify-center mb-3 sm:mb-6">
-              <AdinkraPattern className="w-32 h-2 sm:w-40 md:w-48 text-forest" />
-            </div>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-forest mb-3 sm:mb-4">
-              Meet Our Ubuntu Family
-            </h2>
-            <p className="text-charcoal-light text-sm sm:text-base md:text-lg max-w-2xl mx-auto px-2">
-              The passionate team behind your dining experience
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8">
-            {teamMembers.map((member, index) => (
-              <motion.div
-                key={member.name}
-                initial={{ opacity: 0, y: 10 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{ delay: index * 0.1 }}
-                className="group"
-              >
-                <div className="bg-white rounded-2xl sm:rounded-3xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300">
-                  {/* Header */}
-                  <div className="h-28 sm:h-32 md:h-36 bg-gradient-to-r from-forest to-forest-dark relative">
-                    <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between">
-                      <div className="bg-gold text-forest px-2 py-1 rounded-full text-xs sm:text-sm font-bold">
-                        {member.years} yrs
-                      </div>
-                      <div className="bg-white/20 backdrop-blur-sm px-2 py-1 rounded-full">
-                        <Star size={12} className="sm:w-4 sm:h-4 text-gold" />
-                      </div>
-                    </div>
+        {/* ===== THE CALLING ===== */}
+        <div className="mb-20 md:mb-28">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+            >
+              <div className="flex items-center gap-2 mb-4">
+                <div className="h-[2px] w-8 bg-black" />
+                <span className="text-xs uppercase tracking-[0.2em] text-gray-600 font-light">
+                  The Calling
+                </span>
+              </div>
+              
+              <h2 className="text-2xl md:text-3xl font-light text-gray-900 mb-6 leading-tight">
+                From the Pulpit to the<span className="block font-serif italic text-gray-700 mt-2">Coaching Room</span>
+              </h2>
+              
+              <div className="space-y-4 text-gray-700 font-light leading-relaxed">
+                <p>
+                  In 2008, I stood before my first congregation—nervous, eager, and 
+                  deeply aware of the weight of pastoral responsibility. What I didn't 
+                  anticipate was how many people would stay after the service, not for 
+                  prayer, but for guidance on career decisions, marriage struggles, and 
+                  life transitions.
+                </p>
+                <p>
+                  <span className="font-medium text-gray-900">"Pastor, I know God has a plan—but how do I actually find it?"</span>
+                </p>
+                <p>
+                  That question became the seed of my coaching ministry. I realized that 
+                  while Sunday sermons feed the spirit, Monday decisions require practical 
+                  wisdom. Over the next decade, I developed a framework that bridges 
+                  biblical truth with behavioral science, spiritual formation with 
+                  strategic planning.
+                </p>
+                <p>
+                  Today, that framework has helped thousands move from confusion to 
+                  clarity, from stagnation to momentum, from surviving to thriving.
+                </p>
+              </div>
+            </motion.div>
+            
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="relative"
+            >
+              <div className="bg-white border border-gray-200 rounded-2xl p-6 md:p-8 shadow-sm">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-10 h-10 bg-black rounded-full flex items-center justify-center">
+                    <Clock size={18} className="text-white" />
                   </div>
-                  
-                  {/* Member Info */}
-                  <div className="p-3 sm:p-4 md:p-6">
-                    <h3 className="text-base sm:text-lg font-bold text-forest mb-1">{member.name}</h3>
-                    <p className="text-sm text-gold font-medium mb-2 sm:mb-3">{member.role}</p>
-                    <p className="text-xs sm:text-sm text-charcoal-light mb-3 sm:mb-4 leading-relaxed">{member.bio}</p>
-                    
-                    {/* Expertise */}
-                    <div className="space-y-1 sm:space-y-2">
-                      {member.expertise.map((skill) => (
-                        <div key={skill} className="flex items-center gap-2">
-                          <div className="w-1.5 h-1.5 bg-gold rounded-full" />
-                          <span className="text-xs text-charcoal">{skill}</span>
-                        </div>
-                      ))}
-                    </div>
+                  <div>
+                    <h3 className="text-sm font-medium text-gray-900">16 Years of Ministry</h3>
+                    <p className="text-xs text-gray-500">2008 — Present</p>
                   </div>
                 </div>
+                
+                {/* Timeline */}
+                <div className="space-y-5">
+                  {milestones.map((item, index) => (
+                    <div key={index} className="flex gap-4">
+                      <div className="relative flex flex-col items-center">
+                        <div className="w-2 h-2 bg-black rounded-full mt-1.5" />
+                        {index < milestones.length - 1 && (
+                          <div className="absolute top-3.5 bottom-0 w-px h-full bg-gray-200" />
+                        )}
+                      </div>
+                      <div className="flex-1 pb-5">
+                        <div className="text-xs font-medium text-gray-900 mb-0.5">
+                          {item.year}
+                        </div>
+                        <div className="text-sm font-medium text-gray-900">
+                          {item.title}
+                        </div>
+                        <div className="text-xs text-gray-500">
+                          {item.description}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+
+        {/* ===== VALUES ===== */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="mb-20 md:mb-28"
+        >
+          <div className="text-center mb-12">
+            <div className="flex items-center justify-center gap-2 mb-3">
+              <div className="h-[2px] w-8 bg-black" />
+              <span className="text-xs uppercase tracking-[0.2em] text-gray-600 font-light">
+                What I Believe
+              </span>
+              <div className="h-[2px] w-8 bg-black" />
+            </div>
+            <h2 className="text-2xl md:text-3xl font-light text-gray-900">
+              Principles That Guide My Work
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+            {values.map((value, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: index * 0.05 }}
+                className="bg-white border border-gray-200 rounded-xl p-6 hover:border-gray-300 hover:shadow-md transition-all"
+              >
+                <div className="w-10 h-10 bg-black/5 rounded-full flex items-center justify-center mb-4">
+                  <div className="text-gray-700">
+                    {value.icon}
+                  </div>
+                </div>
+                <h3 className="text-base font-medium text-gray-900 mb-2">
+                  {value.title}
+                </h3>
+                <p className="text-xs text-gray-600 font-light leading-relaxed">
+                  {value.description}
+                </p>
               </motion.div>
             ))}
           </div>
-        </section>
+        </motion.div>
+
+        {/* ===== TESTIMONIAL ===== */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="mb-20 md:mb-28"
+        >
+          <div className="bg-gray-50 border border-gray-200 rounded-2xl p-8 md:p-12">
+            <div className="max-w-3xl mx-auto text-center">
+              <Quote size={40} className="text-gray-300 mx-auto mb-6" />
+              <blockquote className="text-xl md:text-2xl font-light text-gray-900 mb-6 leading-relaxed">
+                "Pastor Sifiso doesn't just tell you what to do—he helps you discover 
+                who you are. His coaching gave me the clarity I'd been praying for 
+                for years. In six sessions, I found direction that had eluded me for 
+                a decade."
+              </blockquote>
+              <div className="w-16 h-[2px] bg-black/20 mx-auto mb-4" />
+              <p className="text-sm font-medium text-gray-900">
+                — Thabo M.
+              </p>
+              <p className="text-xs text-gray-500">
+                Coaching Client, Johannesburg
+              </p>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* ===== CALL TO ACTION ===== */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="bg-black rounded-2xl p-8 md:p-12 text-center"
+        >
+          <h2 className="text-2xl md:text-3xl font-light text-white mb-4">
+            Ready to Discover Your Purpose?
+          </h2>
+          <p className="text-white/70 text-sm md:text-base max-w-2xl mx-auto mb-8 font-light">
+            Whether through coaching, a workshop, or one of my books—I'd be honored 
+            to walk with you on your journey.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link
+              href="/contact"
+              className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white text-black text-sm rounded-lg hover:bg-gray-100 transition-all active:scale-95"
+            >
+              <span>Book a Session</span>
+              <ChevronRight size={16} />
+            </Link>
+            <Link
+              href="/events"
+              className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-transparent text-white text-sm border border-white/30 rounded-lg hover:bg-white/10 transition-all active:scale-95"
+            >
+              <Calendar size={16} />
+              <span>View Upcoming Events</span>
+            </Link>
+          </div>
+        </motion.div>
+
       </div>
     </div>
-  );
+  )
 }

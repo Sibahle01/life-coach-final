@@ -1,3 +1,4 @@
+// /src/app/admin/session-bookings/page.tsx
 'use client'
 
 import { useState, useEffect } from 'react'
@@ -209,7 +210,6 @@ export default function SessionBookingsPage() {
           <p className="text-gray-600 mt-2">Manage coaching sessions, counselling appointments, and speaking engagements</p>
         </div>
         
-        {/* UPDATED BUTTON: Removed Link, added Alert button */}
         <button
           onClick={() => alert('Bookings are created through the public website. Clients book sessions directly.')}
           className="px-6 py-3 bg-gray-900 text-white font-medium rounded-lg hover:bg-black transition-colors flex items-center gap-2"
@@ -234,7 +234,7 @@ export default function SessionBookingsPage() {
         </div>
       )}
 
-      {/* Stats Section (Omitted for brevity but kept in code) */}
+      {/* Stats Section */}
       <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8">
         <div className="bg-white p-4 rounded-xl border border-gray-200">
           <p className="text-sm font-medium text-gray-600">Total Bookings</p>
@@ -271,7 +271,7 @@ export default function SessionBookingsPage() {
                 placeholder="Search by client name, email, booking number..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-colors"
+                className="w-full pl-12 pr-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-colors bg-white text-gray-900 placeholder:text-gray-500"
               />
             </div>
           </div>
@@ -279,7 +279,7 @@ export default function SessionBookingsPage() {
             <select
               value={filter}
               onChange={(e) => setFilter(e.target.value)}
-              className="px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-colors"
+              className="px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-colors bg-white text-gray-900"
             >
               <option value="all">All Statuses</option>
               <option value="pending">Pending</option>
@@ -317,7 +317,6 @@ export default function SessionBookingsPage() {
                 : "Try adjusting your search or filter"}
             </p>
             
-            {/* UPDATED EMPTY STATE BUTTON: Removed Link */}
             <button
               onClick={() => alert('Bookings are created through the public booking form. Visit the public site to test booking.')}
               className="inline-block px-6 py-3 bg-gray-900 text-white font-medium rounded-lg hover:bg-black transition-colors"
@@ -376,14 +375,14 @@ export default function SessionBookingsPage() {
                       <div className="flex flex-col gap-2">
                         <Link
                           href={`/admin/session-bookings/${booking.id}`}
-                          className="px-3 py-1.5 text-sm text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors inline-block text-center"
+                          className="px-3 py-1.5 text-sm text-gray-700 bg-gray-100 hover:bg-gray-200 font-medium rounded-lg transition-colors inline-block text-center"
                         >
                           View
                         </Link>
                         <select
                           value={booking.status}
                           onChange={(e) => handleStatusChange(booking.id, e.target.value)}
-                          className="text-xs px-2 py-1 rounded border border-gray-300"
+                          className="text-xs px-2 py-1 rounded border border-gray-300 bg-white text-gray-900 focus:ring-2 focus:ring-gray-900 focus:border-transparent"
                         >
                           <option value="PENDING">Pending</option>
                           <option value="CONFIRMED">Confirmed</option>
@@ -401,33 +400,98 @@ export default function SessionBookingsPage() {
         )}
       </div>
 
-      {/* Details Modal (Keeping existing logic) */}
+      {/* Details Modal */}
       {viewDetails && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
             <div className="p-6 border-b border-gray-200 flex justify-between items-center">
-              <h2 className="text-2xl font-bold">Booking Details</h2>
-              <button onClick={() => setViewDetails(null)} className="p-2 hover:bg-gray-100 rounded-full">
+              <h2 className="text-2xl font-bold text-gray-900">Booking Details</h2>
+              <button 
+                onClick={() => setViewDetails(null)} 
+                className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
+              >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
             </div>
             <div className="p-6">
-              {/* Simplified Modal Content for display */}
               {(() => {
                 const b = bookings.find(x => x.id === viewDetails)
                 if(!b) return null;
                 return (
                   <div className="space-y-4">
-                    <p><strong>Client:</strong> {b.clientName} ({b.clientEmail})</p>
-                    <p><strong>Service:</strong> {b.service.name}</p>
-                    <p><strong>Date:</strong> {formatDate(b.bookingDate)} at {b.bookingTime}</p>
-                    <p><strong>Format:</strong> {b.format}</p>
-                    {b.notes && <p><strong>Notes:</strong> {b.notes}</p>}
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-sm font-medium text-gray-600">Booking Number</p>
+                        <p className="text-base font-medium text-gray-900">#{b.bookingNumber}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-600">Service</p>
+                        <p className="text-base font-medium text-gray-900">{b.service.name}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-600">Client Name</p>
+                        <p className="text-base font-medium text-gray-900">{b.clientName}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-600">Client Email</p>
+                        <p className="text-base font-medium text-gray-900">{b.clientEmail}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-600">Date & Time</p>
+                        <p className="text-base font-medium text-gray-900">
+                          {formatDate(b.bookingDate)} at {b.bookingTime}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-600">Format</p>
+                        <p className="text-base font-medium text-gray-900 capitalize">{b.format}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-600">Payment Status</p>
+                        <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium mt-1 ${getPaymentBadgeColor(b.paymentStatus)}`}>
+                          {b.paymentStatus}
+                        </span>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-600">Amount Paid</p>
+                        <p className="text-base font-medium text-gray-900">
+                          R {typeof b.amountPaid === 'number' ? b.amountPaid.toFixed(2) : parseFloat(b.amountPaid as string).toFixed(2)}
+                        </p>
+                      </div>
+                    </div>
+                    
+                    {b.notes && (
+                      <div className="pt-4">
+                        <p className="text-sm font-medium text-gray-600 mb-2">Notes</p>
+                        <p className="text-sm text-gray-900 bg-gray-50 p-3 rounded-lg">{b.notes}</p>
+                      </div>
+                    )}
+                    
+                    {b.specialRequests && (
+                      <div className="pt-2">
+                        <p className="text-sm font-medium text-gray-600 mb-2">Special Requests</p>
+                        <p className="text-sm text-gray-900 bg-gray-50 p-3 rounded-lg">{b.specialRequests}</p>
+                      </div>
+                    )}
+                    
                     <div className="pt-4 flex justify-end gap-2">
-                      <button onClick={() => setViewDetails(null)} className="px-4 py-2 bg-gray-200 rounded-lg">Close</button>
-                      <button onClick={() => handleSendConfirmation(b.id)} className="px-4 py-2 bg-blue-600 text-white rounded-lg">Send Confirmation</button>
+                      <button 
+                        onClick={() => setViewDetails(null)} 
+                        className="px-4 py-2 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 transition-colors"
+                      >
+                        Close
+                      </button>
+                      <button 
+                        onClick={() => {
+                          handleSendConfirmation(b.id);
+                          setViewDetails(null);
+                        }} 
+                        className="px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
+                      >
+                        Send Confirmation
+                      </button>
                     </div>
                   </div>
                 )
