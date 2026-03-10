@@ -1,0 +1,9 @@
+{
+  "buildCommand": "next build",
+  "installCommand": "npm install",
+  "framework": "nextjs",
+  "outputDirectory": ".next",
+  "env": {
+    "NEXT_PUBLIC_USE_MOCK_DATA": "true"
+  }
+}
