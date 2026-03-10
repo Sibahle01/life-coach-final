@@ -8,8 +8,8 @@ export async function POST(request: NextRequest) {
     
     const result = await sendEmail({
       to: body.to,
-      subject: body.subject || 'Event Ticket Confirmation',
-      html: body.html || '<p>Your event ticket has been confirmed.</p>'
+      subject: body.subject || 'Speaking Request Confirmation',
+      html: body.html || '<p>Your speaking request has been received.</p>'
     })
 
     if (result.success) {

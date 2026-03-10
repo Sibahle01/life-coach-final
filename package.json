@@ -1,19 +1,26 @@
 {
-  "name": "ubuntu-garden-lounge",
+  "name": "sfiso-zungu-life-coach",
   "version": "1.0.0",
   "private": true,
+  "description": "Professional Life Coach Platform for Sfiso Zungu - Spiritual Life Coach & Mentor",
+  "author": "Sfiso Zungu",
   "scripts": {
     "dev": "next dev",
     "build": "prisma generate && next build",
+    "build:demo":  "set NEXT_PUBLIC_USE_MOCK_DATA=true && next build",
     "start": "next start",
     "lint": "next lint",
-    "clear-menu": "tsx scripts/clear-menu.ts",
-    "prebuild": "rm -rf .next"
+    "prebuild": "if exist .next rmdir /s /q .next"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "life coach",
+    "spiritual guidance",
+    "mentoring",
+    "personal development",
+    "faith coaching",
+    "south africa"
+  ],
   "license": "ISC",
-  "description": "",
   "dependencies": {
     "@prisma/client": "^6.0.0",
     "@supabase/supabase-js": "^2.95.3",
@@ -46,5 +53,10 @@
   },
   "prisma": {
     "seed": "node prisma/seed.js"
+  },
+  "homepage": "https://sfiso-zungu-coaching.vercel.app",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Sibahle01/life-coach-final.git"
   }
 }

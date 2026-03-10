@@ -1,32 +1,27 @@
-﻿// src/app/layout.tsx
+﻿// File: /src/app/layout.tsx
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
 import LayoutContent from "@/components/layout/LayoutContent";
 
-// Font configuration - Only Inter font
-const inter = Inter({ 
-  subsets: ["latin"],
-  variable: '--font-inter',
-  display: 'swap', // Better font loading
-});
+// REMOVED: Google Inter font import - now using system fonts
+// This eliminates the network dependency during build
 
 export const metadata: Metadata = {
-  title: "Pastor Sifiso Nkabinde | Spiritual Leadership Coach",
-  description: "Biblical coaching for modern leaders seeking purpose, clarity, and spiritual fulfillment. Transform your life through faith.",
-  keywords: ["spiritual coaching", "biblical wisdom", "leadership", "faith", "purpose", "pastor", "life coach", "ministry", "Johannesburg"],
-  authors: [{ name: "Pastor Sifiso Nkabinde" }],
+  title: "Sfiso Zungu | Spiritual Life Coach",
+  description: "Transform your life through faith and purpose with Sfiso Zungu. Book coaching sessions, attend workshops, and discover spiritual growth.",
+  keywords: ["life coach", "spiritual guidance", "faith coaching", "personal development", "Sfiso Zungu", "mentoring", "South Africa"],
+  authors: [{ name: "Sfiso Zungu" }],
   openGraph: {
     type: 'website',
-    title: 'Pastor Sifiso Nkabinde - Spiritual Leadership Coach',
-    description: 'Transform your life through biblical wisdom and practical coaching.',
-    siteName: 'Pastor Sifiso Nkabinde',
+    title: 'Sfiso Zungu - Spiritual Life Coach',
+    description: 'Transform your life through faith and purpose with personalized coaching.',
+    siteName: 'Sfiso Zungu Coaching',
     locale: 'en_ZA',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Pastor Sifiso Nkabinde | Spiritual Leadership Coach',
-    description: 'Biblical coaching for modern leaders seeking purpose and spiritual fulfillment.',
+    title: 'Sfiso Zungu | Spiritual Life Coach',
+    description: 'Faith-based coaching for purpose and spiritual fulfillment.',
   },
   robots: {
     index: true,
@@ -47,17 +42,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={inter.variable}>
+    <html lang="en">
       <head>
         <link rel="icon" href="/favicon.ico" />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
-        <meta name="theme-color" content="#131313" />
+        <meta name="theme-color" content="#000000" />
         
-        {/* Preconnect to Google Fonts for better performance */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        {/* REMOVED: Google Fonts preconnects - no longer needed */}
       </head>
-      <body className="font-sans bg-black text-white antialiased">
+      <body className="font-sans antialiased">
         <LayoutContent>{children}</LayoutContent>
       </body>
     </html>

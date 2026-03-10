@@ -29,7 +29,7 @@ export default function AboutBooksSection() {
       try {
         const defaultBook: Book = {
           id: '1',
-          title: "Circle of Seven: A Relationship Masterclass",
+          title: "Circle of Eight: A Relationship Masterclass",
           description: "Transform your relationships through biblical principles and practical wisdom. This masterclass guides you through seven essential relationship circles for holistic connection.",
           category: "Relationships & Marriage",
           pages: 52,
@@ -38,7 +38,7 @@ export default function AboutBooksSection() {
           formats: ["Paperback", "eBook"],
           featured: true,
           stockQuantity: 150,
-          author: "Pastor Sifiso Nkabinde"
+          author: "Pastor Sifiso Zungu"
         };
         
         setBook(defaultBook);
@@ -145,7 +145,7 @@ export default function AboutBooksSection() {
                   SIFISO
                 </h2>
                 <p className="text-2xl md:text-3xl font-serif italic text-white/90 mb-6">
-                  Nkabinde
+                  Zungu
                 </p>
                 
                 <motion.div
@@ -168,7 +168,7 @@ export default function AboutBooksSection() {
             >
               <div className="max-w-2xl">
                 <p className="text-lg md:text-xl text-white/90 leading-relaxed font-light mb-6">
-                  Pastor Sifiso Nkabinde combines <strong className="font-normal text-white">16 years of ministry</strong> with practical coaching to help individuals discover their divine purpose.
+                  Pastor Sifiso Zungu combines <strong className="font-normal text-white">16 years of ministry</strong> with practical coaching to help individuals discover their divine purpose.
                 </p>
                 <p className="text-base md:text-lg text-white/80 leading-relaxed font-light">
                   His approach bridges biblical wisdom with modern life challenges, guiding people toward spiritual clarity and meaningful transformation through faith-based coaching and published works.
